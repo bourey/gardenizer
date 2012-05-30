@@ -1,0 +1,330 @@
+<!DOCTYPE html> 
+    <html> 
+    	<head> 
+    	<title>My Page</title> 
+    	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+    	<link rel="stylesheet" href="smoothness/jquery-ui-1.8.20.custom.css" />
+    	<link rel="stylesheet" href="jquery.mobile-1.1.0.css" />
+    	<script src="jquery-1.7.2.js"></script>
+    	<script src="jquery-ui-1.8.20.custom.min.js"></script>
+    	<script src="jquery.mobile-1.1.0.js"></script>
+    	<script src="plants.json"></script>
+    	<style type="text/css">
+    	    #garden-map { width: 800px; height: 400px; border: thin solid black; margin:20px; }
+    	    #garden-map div.plant-area { height: 100px; width: 100px; border: thin solid black; }
+    	</style>
+    	
+    	<script type="text/javascript">
+    	    var plantings, currentPlant;
+    	    
+    	    // some test data
+    	    plantings = [
+    	        { areaType: "fill-area", harvestDate: "05/01/2011", plantDate: "04/01/2011", plantingType: "seed", source: "Swanson's", plant: "Carrot" },
+    	        { areaType: "fill-area", harvestDate: "06/01/2011", plantDate: "04/01/2011", plantingType: "seed", source: "Swanson's", plant: "Radish" },
+    	        { areaType: "single-plant", harvestDate: "09/01/2011", plantDate: "06/01/2011", plantingType: "seed", source: "Swanson's", plant: "Tomato" }
+    	    ];
+    	    
+    	    var showPlantingDetails = function(planting) {
+    	        $("#map .planting-details h2 a").text(planting.plant).click(function () { showPlantingNotes(planting); });
+    	    };
+    	    
+    	    var addPlantingToMap = function(planting) {
+    	        console.log(planting);
+    	        var plant = $(document.createElement("div")).addClass("ui-widget-content").addClass("plant-area")
+    	            .append($(document.createElement("h2")).addClass("ui-widget-header")
+    	            .append($(document.createElement("a")).attr("href", "javascript:;").text(planting.plant)
+    	            .click(function () { showPlantingDetails(planting); }))).draggable();
+    	        $("#garden-map").append(plant);
+    	        $(plant).resizable();
+    	    };
+    	
+    	    var addPlanting = function () {
+    	        var form = this;
+    	        var planting = {
+                    areaType: $(form.addby).val(),
+                    plantingType: $(form.plantas).val(),
+                    plantDate: $(form.plantDate).val(),
+                    harvestDate: $(form.harvestDate).val(),
+                    source: $(form.source).val()
+    	        };
+    	        plantings.push(planting);
+    	        $.mobile.changePage("#map");
+    	        addPlantingToMap(planting);
+    	        return false;
+    	    };
+    	    
+    	    var renderPlantList = function () {
+    	        var plantNode = $(".plant-list li:eq(1)");
+    	        $(".plant-list li:gt(1)").remove();
+    	        var plantList = $(".plant-list");
+    	        $(plants).each(function (idx, plant) {
+    	            var newPlant = plantNode.clone();
+    	            newPlant.find("a").text(plant.name).click(function () { showPlant(plant); });
+    	            plantList.append(newPlant);
+    	        });
+    	    };
+
+    	    var showPlant = function (input) {
+    	        if (input.plant) {
+        	        $("#add [name=plantDate]").val(planting.plantDate);
+        	        $("#add [name=harvestDate]").val(planting.harvestDate);
+        	        $("#add [name=source]").val(planting.source);
+        	        $("#add [name=plantas]").val(planting.plantingType);
+        	        currentPlant = input.plant;
+    	        } else {
+    	            currentPlant = input.name;
+    	        }
+    	        $(".plant-detail-name").text(currentPlant);
+    	        $.mobile.changePage($("#add"));
+    	    };
+    	        	    
+    	    var renderHistoryList = function () {
+    	        var plantNode = $(".history-list li:eq(1)");
+    	        $(".history-list li:gt(1)").remove();
+    	        var historyList = $(".history-list");
+    	        $(plantings).each(function (idx, planting) {
+    	            var newPlant = plantNode.clone();
+    	            newPlant.find("a").text(planting.plant).click(function () { console.log(this) });
+    	            historyList.append(newPlant);
+    	        });
+    	    };
+    	    
+    	    var showPlantingNotes = function (planting) {
+    	        $("#history [name=plantDate]").val(planting.plantDate);
+    	        $("#history [name=harvestDate]").val(planting.harvestDate);
+    	        $("#history [name=source]").val(planting.source);
+    	        $("#history [name=plantas]").val(planting.plantingType);
+    	        $("#history span.plant-name").val(planting.plant);
+    	        $.mobile.changePage("#history");
+    	    };
+    	    
+    	    $(document).ready(function () {
+    	        $("#plant-date").datepicker();
+    	        $("#harvest-date").datepicker();
+    	        
+    	        renderPlantList();
+    	        renderHistoryList();
+    	        $(".add-planting-form").submit(addPlanting);
+    	        
+    	        $(plantings).each(function (idx, planting) {
+    	            addPlantingToMap(planting);
+    	        });
+    	    });
+    	</script>
+    	
+    </head> 
+    <body> 
+
+        <div data-role="page" id="map">
+
+        	<div data-role="header">
+        		<h1>Gardenizer</h1>
+        	</div>
+
+        	<div data-role="content" style="text-align: right;">	
+        	    <a href="#search">Add plants</a>
+        	    <a href="#history">Notes</a>
+        	    <a href="#calendar">Calendar</a>
+        	</div>
+        	
+        	<div id="garden-map">
+        	</div>
+        	<div class="month-selector">
+        	    <a href="javascript:;">&lt;</a>
+        	    April
+        	    <a href="javascript:;">&gt;</a>
+        	</div>
+        	<div class="planting-details">
+        	   <h2><a href="javascript:;">Radish</a></h2>
+        	   <p>square feet, details, etc.</p>
+        	</div>
+
+        </div>
+
+        <div data-role="page" id="search">
+
+        	<div data-role="header">
+        	    <a href="javascript:;" data-rel="back" data-icon="back">Back</a>
+        		<h1>Find Plants</h1>
+        	</div><!-- /header -->
+
+        	<div data-role="content">
+        	    <div class="ui-grid-a">
+            	    <div class="ui-block-a">
+                	    <form>
+                	        <div data-role="fieldcontain">
+                        	    <input id="plant-name" name="plant-name" type="text" data-type="search" placeholder="Plant"/>
+                    	    </div>
+                    	    <div data-role="fieldcontain">
+                        	    <fieldset data-role="controlgroup" data-type="horizontal">
+                            	    <input id="full-sun" type="checkbox" checked="checked"/> 
+                            	    <label for="full-sun">Full sun</label>
+                            	    <input id="partial-sun" type="checkbox" checked="checked"/> 
+                            	    <label for="partial-sun">Partial sun</label>
+                        	    </fieldset>
+                    	    </div>
+                    	    <div data-role="fieldcontain">
+                        	    <label for="harvest-time">Max time to harvest</label>
+                        	    <input id="harvest-time" type="text" style="width: 3em"/>
+                        	    days
+                    	    </div>
+                    	    <div data-role="fieldcontain">
+                    	        <legend>Max space</legend>
+                        	    <input id="space-horiz" type="text" style="width: 2em"/> x <input id="space-vert" type="text" style="width: 2em"> ft
+                    	    </div>
+                	    </form>
+            	    </div>
+            	    <div class="ui-block-b">
+                	    <ul data-role="listview" class="plant-list">
+                	        <li data-role="list-divider">Plants</li>
+                	        <li><a href="javascript:;">Carrot</a></li>
+                	        <li><a href="javascript:;q">Radish</a></li>
+                	    </ul>
+            	    </div>
+        	    </div>
+        	</div><!-- /content -->
+
+        </div><!-- /page -->
+
+        <div data-role="page" id="add">
+
+        	<div data-role="header">
+        	    <a href="javascript:;" data-rel="back" data-icon="back">Back</a>
+        		<h1>Tomato</h1>
+        	</div><!-- /header -->
+
+        	<div data-role="content">	
+        	    <div class="ui-grid-a">
+            	    <div class="ui-block-a">
+            	        <h2 class="plant-detail-name">
+            	            Tomato
+            	        </h2>
+            	        <p class="plant-detail-info">tomato infos!</p>
+            	    </div>
+            	    <div class="ui-block-b">
+            	        <h2>Add to garden</h2>
+            	        <form class="add-planting-form">
+                    	    <div data-role="fieldcontain">
+                    	        <legend>Add as</legend>
+                	            <fieldset data-role="controlgroup" data-type="horizontal">
+                	                <label for="fill-area">Fill area</label>
+                	                <input id="fill-area" name="addby" value="fill-area" type="radio" checked="checked"/>
+                	                <label for="single-plant">Single plant</label>
+                	                <input id="single-plant" name="addby" value="single-plant" type="radio"/>
+                	            </fieldset>
+            	            </div>
+                    	    <div data-role="fieldcontain">
+                    	        <label>Plant as</label>
+                	            <fieldset data-role="controlgroup" data-type="horizontal">
+                	                <label for="seed">Seed</label>
+                	                <input id="seed" name="plantas" value="seed" type="radio" checked="checked"/>
+                	                <label for="start">Start</label>
+                	                <input id="start" name="plantas" value="start" type="radio"/>
+                	            </fieldset>
+            	            </div>
+            	            <div data-role="fieldcontain">
+            	                <label for="plant-date">Plant date</label>
+            	                <input id="plant-date" name="plantDate" type="text"/>
+            	            </div>
+            	            <div data-role="fieldcontain">
+            	                <label for="harvest-date">Harvest date</label>
+            	                <input id="harvest-date" name="harvestDate" type="text"/>
+            	            </div>
+            	            <div data-role="fieldcontain">
+            	                <label for="source">Plant/seed source</label>
+            	                <textarea id="source" name="source"></textarea>
+            	            </div>
+            	            <input type="submit" value="Add"/>
+            	        </form>
+            	    </div>
+        	    </div>
+        	</div><!-- /content -->
+        	
+        </div><!-- /page -->
+
+        <div data-role="page" id="history">
+
+        	<div data-role="header">
+        	    <a href="javascript:;" data-rel="back" data-icon="back">Back</a>
+        		<h1>History</h1>
+        	</div><!-- /header -->
+
+        	<div data-role="content">
+        	    <div class="ui-grid-a">
+                    <div class="ui-block-a">
+                        <form>
+                	        <div data-role="fieldcontain">
+                    	        <label for="year" class="ui-hidden-accessible">Year</label>
+                    	        <select id="year">
+                                    <option>2012</option>
+                                    <option>2011</option>
+                                    <option>2010</option>
+                    	        </select>
+                	        </div>
+                	        <div data-role="fieldcontain">
+                    	        <input id="plant" type="text" data-type="search" placeholder="Plant" style="width:100%"/>
+                	        </div>
+                        </form>
+                        <ul data-role="listview" data-inset="true" class="history-list" style="margin-right: 20px">
+                            <li data-role="list-divider">2012</li>
+                            <li><a href="javascript:;">Radish, breakfast</a></li>
+                        </ul>
+                    </div>
+            	    <div class="ui-block-b">
+            	        <h2>My Notes: <span class="plant-name"></span></h2>
+            	        <form>
+                	        <div data-role="fieldcontain">
+                    	        <label for="planted">Planted</label>
+                    	        <input id="planted" name="plantDate" type="text"/>
+                	        </div>
+                	        <div data-role="fieldcontain">
+                    	        <label for="harvest-date">Harvested</label>
+                    	        <input id="harvest-date" name="harvestDate" type="text"/>
+                	        </div>
+                	        <div data-role="fieldcontain">
+                    	        <label for="plant-source">Plant source</label>
+                    	        <input id="plant-source" name="source" type="text"/>
+                	        </div>
+                	        <div data-role="fieldcontain">
+                    	        <label for="planted-from">Planted from</label>
+                    	        <input id="planted-from" name="plantas" type="text"/>
+                	        </div>
+                	        <div data-role="fieldcontain">
+                    	        <label for="notes">Notes</label>
+                    	        <textarea id="notes"></textarea>
+                	        </div>
+            	        </form>
+            	        <a href="index.html" data-role="button" data-icon="plus">Plant Again</a>
+            	        <h2>Plant Information</h2>
+            	        <p>plant infos!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div data-role="page" id="calendar">
+
+        	<div data-role="header">
+        	    <a href="javascript:;" data-rel="back" data-icon="back">Back</a>
+        		<h1>Calendar</h1>
+        	</div><!-- /header -->
+
+        	<div data-role="content">
+                <ul data-role="listview" data-inset="true">
+                    <li data-role="list-divider">April</li>
+                    <li>Plant radishes</li>
+                    <li>Plant radishes</li>
+                    <li>Plant radishes</li>
+                    <li data-role="list-divider">May</li>
+                    <li>Plant radishes</li>
+                    <li data-role="list-divider">June</li>
+                    <li>Plant radishes</li>
+                    <li data-role="list-divider">July</li>
+                    <li>Plant radishes</li>
+                    <li>Plant radishes</li>
+                </ul>
+            </div>
+        </div>
+
+    </body>
+</html>
