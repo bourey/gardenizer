@@ -1,0 +1,34 @@
+#garden-map {
+  width: 1200px;
+  height: 500px;
+  border: thin solid black;
+  margin-left: 10px;
+  /*
+   * Absolute positioning to ensure that the resizable UI magic can figure out
+   * the size of the garden correctly.
+   */
+  position: absolute;
+}
+
+#garden-map div.plant-area {
+  height: 50px;
+  width: 50px;
+  border: none;
+  background-repeat: repeat;
+  background-position: left top;
+}
+
+.month-selector {
+  left: 20px;
+  top: 600px;
+  position: absolute;
+}
+.planting-details {
+  left: 20px;
+  top: 600px;
+  position: absolute;
+}
+
+.header-links {
+  width: 1195px;
+}

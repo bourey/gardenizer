@@ -9,10 +9,7 @@
     	<script src="jquery-ui-1.8.20.custom.min.js"></script>
     	<script src="jquery.mobile-1.1.0.js"></script>
     	<script src="plants.json"></script>
-    	<style type="text/css">
-    	    #garden-map { width: 800px; height: 400px; border: thin solid black; margin:20px; }
-    	    #garden-map div.plant-area { height: 100px; width: 100px; border: thin solid black; }
-    	</style>
+    	<link rel="stylesheet" href="garden.css" />
     	
     	<script type="text/javascript">
     	    var plantings, currentPlant;
@@ -29,13 +26,31 @@
     	    };
     	    
     	    var addPlantingToMap = function(planting) {
+                // TODO: This should track where plants are in the garden, and
+                // not overlap them at the start!
     	        console.log(planting);
-    	        var plant = $(document.createElement("div")).addClass("ui-widget-content").addClass("plant-area")
-    	            .append($(document.createElement("h2")).addClass("ui-widget-header")
-    	            .append($(document.createElement("a")).attr("href", "javascript:;").text(planting.plant)
-    	            .click(function () { showPlantingDetails(planting); }))).draggable();
+    	        var plant =
+                  $(document.createElement("div")).addClass("ui-widget-content").addClass("plant-area").css('background-image',
+                      'url("images/' + planting.plant.toLowerCase() + '.png")')
+                  .click(function () { showPlantingDetails(planting); });
+                $(plant).draggable({
+                      // Constrain the dragging to multiples of the tile size.
+                      grid: [50, 50],
+                      // Don't drag outside the garden.
+                      containment: 'parent'
+                    })
+                $(plant).resizable({
+                  // Constrain the resizing to multiples of the tile size.
+                  grid: [50, 50],
+                  // Don't resize outside the garden.
+                  containment: 'parent'
+                  });
+                // This is set by resizable when resizing, but the default (set
+                // by draggable) is relative.  This fixes some DOM reordering
+                // when resizing a garden patch for the first time.
+                $(plant).css('position', 'absolute');
     	        $("#garden-map").append(plant);
-    	        $(plant).resizable();
+                // Constrain the resizing to multiples of the tile size.
     	    };
     	
     	    var addPlanting = function () {
@@ -121,7 +136,7 @@
         		<h1>Gardenizer</h1>
         	</div>
 
-        	<div data-role="content" style="text-align: right;">	
+        	<div class="header-links" data-role="content" style="text-align: right;">	
         	    <a href="#search">Add plants</a>
         	    <a href="#history">Notes</a>
         	    <a href="#calendar">Calendar</a>
