@@ -12,6 +12,7 @@
     	<link rel="stylesheet" href="garden.css" />
     	
     	<script type="text/javascript">
+            var TILE_SIZE = 50;
     	    var plantings, currentPlant;
     	    
     	    // some test data
@@ -35,22 +36,24 @@
                   .click(function () { showPlantingDetails(planting); });
                 $(plant).draggable({
                       // Constrain the dragging to multiples of the tile size.
-                      grid: [50, 50],
+                      grid: [TILE_SIZE, TILE_SIZE],
                       // Don't drag outside the garden.
-                      containment: 'parent'
+                      containment: 'parent',
+                      // Bring to the front the most recently clicked item.
+                      stack: '#garden-map .plant-area',
+                      distance: 0
                     })
                 $(plant).resizable({
-                  // Constrain the resizing to multiples of the tile size.
-                  grid: [50, 50],
-                  // Don't resize outside the garden.
-                  containment: 'parent'
-                  });
+                      // Constrain the resizing to multiples of the tile size.
+                      grid: [TILE_SIZE, TILE_SIZE],
+                      // Don't resize outside the garden.
+                      containment: 'parent'
+                    });
                 // This is set by resizable when resizing, but the default (set
                 // by draggable) is relative.  This fixes some DOM reordering
                 // when resizing a garden patch for the first time.
                 $(plant).css('position', 'absolute');
     	        $("#garden-map").append(plant);
-                // Constrain the resizing to multiples of the tile size.
     	    };
     	
     	    var addPlanting = function () {
