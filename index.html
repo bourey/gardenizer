@@ -8,6 +8,7 @@
     	<script src="jquery-1.7.2.js"></script>
     	<script src="jquery-ui-1.8.20.custom.min.js"></script>
     	<script src="jquery.mobile-1.1.0.js"></script>
+    	<script src="jquery.overlaps.js"></script>
     	<script src="plants.json"></script>
     	<link rel="stylesheet" href="garden.css" />
     	
@@ -21,8 +22,8 @@
     	    
     	    // some test data
     	    plantings = [
-    	        { areaType: "fill-area", harvestDate: "05/01/2012", plantDate: "04/01/2012", plantingType: "seed", source: "Swanson's", plant: "Carrot", variety: "General", position: { left: 0, top: 0, width: 100, height: 500 }, rating: 3 },
-    	        { areaType: "fill-area", harvestDate: "06/01/2012", plantDate: "04/01/2012", plantingType: "seed", source: "Swanson's", plant: "Radish", variety: "Breakfast", position: { left: 0, top: 0, width: 100, height: 500 }, rating: 3 },
+    	        { areaType: "fill-area", harvestDate: "07/01/2012", plantDate: "04/01/2012", plantingType: "seed", source: "Swanson's", plant: "Carrot", variety: "General", position: { left: 0, top: 0, width: 100, height: 500 }, rating: 3 },
+    	        { areaType: "fill-area", harvestDate: "05/15/2012", plantDate: "04/01/2012", plantingType: "seed", source: "Swanson's", plant: "Radish", variety: "Breakfast", position: { left: 0, top: 0, width: 100, height: 500 }, rating: 3 },
     	        { areaType: "single-plant", harvestDate: "09/01/2012", plantDate: "06/01/2012", plantingType: "seed", source: "Swanson's", plant: "Tomato", variety: "Early Girl", position: { left: 100, top: 0, width: 200, height: 200 }, rating: 4 }
     	    ];
 
@@ -32,6 +33,53 @@
  	            $("#map .harvest-date").text(planting.harvestDate);
  	            $("#map .plant-square-feet").text((planting.position.width * planting.position.height)/2500);
  	            $("#map .planting-details").show();
+ 	            
+ 	            var warnings = true;
+ 	            $("#map .warnings").hide().find("ul").html("");
+ 	            
+ 	            // hard-coded
+ 	            $(plantings).each(function (idx, other) {
+ 	                if (planting != other) {
+ 	                    // check if these two plantings overlap in time and space
+ 	                    if (spaceOverlaps(planting.position, other.position) && dateOverlaps(planting, other)) {
+ 	                        // check to see if this is an allowed interplanting
+ 	                        var allowed = false;
+ 	                        $(interplantings).each(function (idx, interplanting) {
+ 	                            if ($.inArray(planting.plant, interplanting) >= 0 && $.inArray(other.plant, interplanting) >= 0) {
+ 	                                allowed = true;
+ 	                            }
+ 	                        });
+ 	                        if (!allowed) {
+                                $("#map .warnings ul").append($(document.createElement("li")).text("Too much overlap with " + other.plant + " planting"));
+                                $("#map .warnings").show();
+                                warnings = true;
+ 	                        }
+                        }
+                    }
+ 	            });
+ 	            
+    	    };
+    	    
+    	    var stringToDate = function(string) {
+	            var components = string.split("/");
+	            return new Date(components[2], components[0]-1, components[1], 0, 0, 0, 0);
+    	    };
+    	    
+    	    var dateOverlaps = function(planting1, planting2) {
+                var plant1 = stringToDate(planting1.plantDate);
+                var plant2 = stringToDate(planting2.plantDate);
+                var harvest1 = stringToDate(planting1.harvestDate);
+                var harvest2 = stringToDate(planting2.harvestDate);
+                return !(harvest2.getTime() <= plant1.getTime() || harvest1.getTime() <= plant2.getTime());
+    	    };
+    	    
+    	    var spaceOverlaps = function(dims1, dims2) {
+    	        // from https://github.com/brandonaaron/jquery-overlaps
+                var x1 = dims1.left, y1 = dims1.top,
+                    w1 = dims1.width, h1 = dims1.height,
+                    x2 = dims2.left, y2 = dims2.top,
+                    w2 = dims2.width, h2 = dims2.height;
+    	        return !(y2 + h2 <= y1 || y1 + h1 <= y2 || x2 + w2 <= x1 || x1 + w1 <= x2);
     	    };
     	    
     	    var changeMonth = function(direction) {
@@ -71,6 +119,14 @@
                       .css("left", planting.position ? planting.position.left : 0)
                       .css("top", planting.position ? planting.position.top : 0)
                   .click(function () { showPlantingDetails(planting); });
+                plant.append($(document.createElement("a")).addClass("planting-copy-link").text("c").click(function () {
+                    plantings.push(planting);
+                    renderPlantMap();
+                }));
+                plant.append($(document.createElement("a")).addClass("planting-delete-link").text("x").click(function () {
+                    plantings.splice($.inArray(planting, plantings), 1);
+                    renderPlantMap();
+                }));
                 $(plant).draggable({
                       // Constrain the dragging to multiples of the tile size.
                       grid: [TILE_SIZE, TILE_SIZE],
@@ -185,8 +241,7 @@
     	        
     	        $("#add [name=plantDate]").change(function () {
     	            var planting, harvest, components;
-    	            components = $(this).val().split("/");
-    	            planting = new Date(components[2], components[0]-1, components[1], 0, 0, 0, 0);
+    	            planting = stringToDate($(this).val());
     	            harvest = new Date(planting.getTime() + currentPlant.daysToHarvest*24*60*60*1000);
     	            $("#add [name=harvestDate]").val((harvest.getMonth() < 9 ? "0" + (harvest.getMonth()+1) : harvest.getMonth()) + "/" + (harvest.getDate() < 10 ? "0" + harvest.getDate() : harvest.getDate()) + "/" + harvest.getFullYear());
     	        });
@@ -304,6 +359,10 @@
                 	   <p>Planting: <span class="planting-date"></span></p>
                 	   <p>Harvest: <span class="harvest-date"></span></p>
                 	   <p>Square ft: <span class="plant-square-feet"></span></p>
+                	   <div class="warnings">
+                	       Warnings:
+                	      <ul></ul>
+                	   </div>
                 	</div>
             	</div>
 

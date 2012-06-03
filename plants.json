@@ -34,4 +34,4 @@ var plants = [
 { "name": "Watermelon", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"] },
 { "name": "Winter Squash", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"] }
 ];
-var interplantings = [[ "carrot", "radish" ]];
+var interplantings = [[ "Carrot", "Radish" ]];
