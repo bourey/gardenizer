@@ -112,11 +112,12 @@
                     plantingType: $(form.plantas).val(),
                     plantDate: $(form.plantDate).val(),
                     harvestDate: $(form.harvestDate).val(),
-                    source: $(form.source).val()
+                    variety: $(form.plantVariety).val(),
+                    source: $(form.source).val(),
+                    position: { top: 0, left: 0, width: 50, height: 50 }
     	        };
     	        plantings.push(planting);
     	        $.mobile.changePage("#map");
-    	        addPlantingToMap(planting);
     	        month = planting.plantDate.split("/")[0]-1;
     	        year = planting.plantDate.split("/")[2];
     	        $(".month-selector .month").text(months[month] + " " + year);
@@ -152,17 +153,45 @@
     	    };
 
     	    var showPlant = function (input) {
+    	        var currentPlant, selectedVariety;
+    	        if (input.plant) {
+    	            $(plants).each(function (idx, plant) {
+    	                if (plant.name == input.plant) {
+    	                    currentPlant = plant;
+    	                }
+    	            });
+    	            selectedVariety = input.variety;
+    	        } else {
+    	            currentPlant = input;
+    	            selectedVariety = currentPlant.varieties[0];
+    	        }
+    	        
+    	        $(".plant-detail-name").text(currentPlant.name);
+    	        $(".plant-variety-select").html("");
+    	        $(currentPlant.varieties).each(function (idx, variety) {
+    	            var option = new Option(variety);
+    	            if (variety == selectedVariety) {
+    	                $(option).attr("selected", "selected");
+    	            }
+    	            $(".plant-variety-select").append(option);
+    	        });
+    	        $("#add [name=plantVariety]").val(selectedVariety);
     	        if (input.plant) {
         	        $("#add [name=plantDate]").val(input.plantDate);
         	        $("#add [name=harvestDate]").val(input.harvestDate);
         	        $("#add [name=source]").val(input.source);
         	        $("#add [name=plantas]").val(input.plantingType);
-        	        currentPlant = input.plant;
-    	        } else {
-    	            currentPlant = input.name;
     	        }
-    	        $(".plant-detail-name").text(currentPlant);
-    	        $("#add [name=plantName]").val(currentPlant);
+    	        
+    	        $("#add [name=plantDate]").change(function () {
+    	            var planting, harvest, components;
+    	            components = $(this).val().split("/");
+    	            planting = new Date(components[2], components[0]-1, components[1], 0, 0, 0, 0);
+    	            harvest = new Date(planting.getTime() + currentPlant.daysToHarvest*24*60*60*1000);
+    	            $("#add [name=harvestDate]").val((harvest.getMonth() < 9 ? "0" + (harvest.getMonth()+1) : harvest.getMonth()) + "/" + (harvest.getDate() < 10 ? "0" + harvest.getDate() : harvest.getDate()) + "/" + harvest.getFullYear());
+    	        });
+    	        
+    	        $("#add [name=plantName]").val(currentPlant.name);
     	        $.mobile.changePage($("#add"));
     	    };
     	        	    
@@ -219,6 +248,8 @@
     	        $("#harvest-date").datepicker();
     	        
     	        $(".add-planting-form").submit(addPlanting);
+    	        $("#add .plant-variety-select").change(function () { $("#add [name=plantVariety]").val($(this).val()); });
+    	        
 
     	        $(".plant-search-form input").change(renderPlantList).keyup(renderPlantList);
     	        $(".history-search-form select").change(renderHistoryList);
@@ -350,14 +381,16 @@
 
         	<div data-role="header">
         	    <a href="javascript:;" data-rel="back" data-icon="back">Back</a>
-        		<h1>Tomato</h1>
+        		<h1 class="plant-detail-name">Tomato</h1>
         	</div><!-- /header -->
 
         	<div data-role="content">	
         	    <div class="ui-grid-a">
             	    <div class="ui-block-a">
-            	        <h2 class="plant-detail-name">
-            	            Tomato
+            	        <h2>
+            	            <span class="plant-detail-name">Tomato: </span>
+            	            <select class="plant-variety-select" data-inline="true">
+            	            </select>
             	        </h2>
             	        <p class="plant-detail-info">tomato infos!</p>
             	    </div>
@@ -395,6 +428,7 @@
             	                <textarea id="source" name="source"></textarea>
             	            </div>
             	            <input type="hidden" name="plantName"/>
+            	            <input type="hidden" name="plantVariety"/>
             	            <input type="submit" value="Add"/>
             	        </form>
             	    </div>
