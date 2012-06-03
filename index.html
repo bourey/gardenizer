@@ -13,26 +13,63 @@
     	
     	<script type="text/javascript">
             var TILE_SIZE = 50;
-    	    var plantings, currentPlant;
+    	    var plantings, currentPlant, itemTemplate, itemLinkTemplate, itemHeaderTemplate, month, year;
+    	    
+    	    months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
+    	    year = 2012;
+    	    month = 3;
     	    
     	    // some test data
     	    plantings = [
-    	        { areaType: "fill-area", harvestDate: "05/01/2011", plantDate: "04/01/2011", plantingType: "seed", source: "Swanson's", plant: "Carrot" },
-    	        { areaType: "fill-area", harvestDate: "06/01/2011", plantDate: "04/01/2011", plantingType: "seed", source: "Swanson's", plant: "Radish" },
-    	        { areaType: "single-plant", harvestDate: "09/01/2011", plantDate: "06/01/2011", plantingType: "seed", source: "Swanson's", plant: "Tomato" }
+    	        { areaType: "fill-area", harvestDate: "05/01/2012", plantDate: "04/01/2012", plantingType: "seed", source: "Swanson's", plant: "Carrot", position: { left: 0, top: 0, width: 100, height: 500 } },
+    	        { areaType: "fill-area", harvestDate: "06/01/2012", plantDate: "04/01/2012", plantingType: "seed", source: "Swanson's", plant: "Radish", position: { left: 0, top: 0, width: 100, height: 500 } },
+    	        { areaType: "single-plant", harvestDate: "09/01/2012", plantDate: "06/01/2012", plantingType: "seed", source: "Swanson's", plant: "Tomato", position: { left: 100, top: 0, width: 200, height: 200 } }
     	    ];
-    	    
+
     	    var showPlantingDetails = function(planting) {
-    	        $("#map .planting-details h2 a").text(planting.plant).click(function () { showPlantingNotes(planting); });
+    	        $("#map .plant-detail-link").text(planting.plant).unbind("click").click(function () { showPlantingNotes(planting); });
+ 	            $("#map .planting-date").text(planting.plantDate);
+ 	            $("#map .harvest-date").text(planting.harvestDate);
+ 	            $("#map .plant-square-feet").text((planting.position.width * planting.position.height)/2500);
+ 	            $("#map .planting-details").show();
+    	    };
+    	    
+    	    var changeMonth = function(direction) {
+    	        month += direction;
+    	        if (month == -1) {
+    	            month = 11;
+    	            year--;
+    	        } else if (month == 12) {
+    	            month = 0;
+    	            year++;
+    	        }
+    	        $(".month-selector .month").text(months[month] + " " + year);
+    	        
+    	        renderPlantMap();
+    	    };
+    	    
+    	    var renderPlantMap = function () {
+    	        $("#garden-map").html("");
+    	        $(plantings).each(function (idx, planting) { 
+    	            if (
+    	                ((planting.plantDate.split("/")[2]*100+(planting.plantDate.split("/")[0]-1)) <= (year*100+month)) &&
+    	                (!planting.harvestDate || ((planting.harvestDate.split("/")[2]*100+(planting.harvestDate.split("/")[0]-1)) >= (year*100+month)))
+    	                ) {
+    	                addPlantingToMap(planting);
+    	            }
+    	        });    	        
     	    };
     	    
     	    var addPlantingToMap = function(planting) {
                 // TODO: This should track where plants are in the garden, and
                 // not overlap them at the start!
-    	        console.log(planting);
     	        var plant =
                   $(document.createElement("div")).addClass("ui-widget-content").addClass("plant-area").css('background-image',
                       'url("images/' + planting.plant.toLowerCase() + '.png")')
+                      .css("width", planting.position ? planting.position.width : 50)
+                      .css("height", planting.position ? planting.position.height : 50)
+                      .css("left", planting.position ? planting.position.left : 0)
+                      .css("top", planting.position ? planting.position.top : 0)
                   .click(function () { showPlantingDetails(planting); });
                 $(plant).draggable({
                       // Constrain the dragging to multiples of the tile size.
@@ -41,13 +78,24 @@
                       containment: 'parent',
                       // Bring to the front the most recently clicked item.
                       stack: '#garden-map .plant-area',
-                      distance: 0
+                      distance: 0,
+                      drag: function (event, ui) {
+                          var position = $(this).position();
+                          planting.position.top = position.top;
+                          planting.position.left = position.left;
+                          showPlantingDetails(planting);
+                      }
                     })
                 $(plant).resizable({
                       // Constrain the resizing to multiples of the tile size.
                       grid: [TILE_SIZE, TILE_SIZE],
                       // Don't resize outside the garden.
-                      containment: 'parent'
+                      containment: 'parent',
+                      resize: function (event, ui) {
+                          planting.position.width = $(this).width();
+                          planting.position.height = $(this).height();
+                          showPlantingDetails(planting);
+                      }
                     });
                 // This is set by resizable when resizing, but the default (set
                 // by draggable) is relative.  This fixes some DOM reordering
@@ -59,6 +107,7 @@
     	    var addPlanting = function () {
     	        var form = this;
     	        var planting = {
+    	            plant: $(form.plantName).val(),
                     areaType: $(form.addby).val(),
                     plantingType: $(form.plantas).val(),
                     plantDate: $(form.plantDate).val(),
@@ -68,42 +117,69 @@
     	        plantings.push(planting);
     	        $.mobile.changePage("#map");
     	        addPlantingToMap(planting);
+    	        month = planting.plantDate.split("/")[0]-1;
+    	        year = planting.plantDate.split("/")[2];
+    	        $(".month-selector .month").text(months[month] + " " + year);
+    	        renderPlantMap();
     	        return false;
     	    };
     	    
     	    var renderPlantList = function () {
-    	        var plantNode = $(".plant-list li:eq(1)");
-    	        $(".plant-list li:gt(1)").remove();
-    	        var plantList = $(".plant-list");
+    	        var form = $(".plant-search-form").get(0);
+    	        var searchText = $(form['plantName']).val();
+    	        var full = $(form.fullSun).attr("checked") == 'checked';
+    	        var partial = $(form.partialSun).attr("checked") == 'checked';
+    	        var time = $(form.harvestTime).val();
+    	        var vert = $(form.spaceVert).val();
+    	        var horiz = $(form.spaceHoriz).val();
+    	        
+    	        $("#search .plant-list li").remove();
+    	        var plantList = $("#search .plant-list");
     	        $(plants).each(function (idx, plant) {
-    	            var newPlant = plantNode.clone();
-    	            newPlant.find("a").text(plant.name).click(function () { showPlant(plant); });
-    	            plantList.append(newPlant);
+    	            if (
+    	                (!searchText || plant.name.toLowerCase().indexOf(searchText.toLowerCase()) >= 0) &&
+    	                ((full == plant.full) || (partial == plant.partial)) &&
+    	                (!time || plant.daysToHarvest <= time)
+    	                ) {
+    	            
+        	            var newPlant = itemLinkTemplate.clone();
+        	            
+        	            newPlant.find("a").text(plant.name).click(function () { showPlant(plant); });
+        	            plantList.append(newPlant);
+    	            }
     	        });
     	    };
 
     	    var showPlant = function (input) {
     	        if (input.plant) {
-        	        $("#add [name=plantDate]").val(planting.plantDate);
-        	        $("#add [name=harvestDate]").val(planting.harvestDate);
-        	        $("#add [name=source]").val(planting.source);
-        	        $("#add [name=plantas]").val(planting.plantingType);
+        	        $("#add [name=plantDate]").val(input.plantDate);
+        	        $("#add [name=harvestDate]").val(input.harvestDate);
+        	        $("#add [name=source]").val(input.source);
+        	        $("#add [name=plantas]").val(input.plantingType);
         	        currentPlant = input.plant;
     	        } else {
     	            currentPlant = input.name;
     	        }
     	        $(".plant-detail-name").text(currentPlant);
+    	        $("#add [name=plantName]").val(currentPlant);
     	        $.mobile.changePage($("#add"));
     	    };
     	        	    
     	    var renderHistoryList = function () {
-    	        var plantNode = $(".history-list li:eq(1)");
-    	        $(".history-list li:gt(1)").remove();
-    	        var historyList = $(".history-list");
+    	        var form = $(".history-search-form").get(0);
+    	        var year = $(form.year).val();
+    	        var searchText = $(form.plantName).val();
+    	        
+    	        var historyList = $(".history-list").html("");
     	        $(plantings).each(function (idx, planting) {
-    	            var newPlant = plantNode.clone();
-    	            newPlant.find("a").text(planting.plant).click(function () { console.log(this) });
-    	            historyList.append(newPlant);
+    	            if (
+    	                (!year || planting.plantDate.indexOf(year) >= 0) &&
+    	                (!searchText || planting.plant.toLowerCase().indexOf(searchText) >= 0)
+    	                ) {
+        	            var newPlant = itemLinkTemplate.clone();
+        	            newPlant.find("a").html("<h3>" + planting.plant + "</h3><p>Stars" + planting.plantDate + "</p>").click(function () { showPlantingNotes(planting); });
+        	            historyList.append(newPlant);
+    	            }
     	        });
     	    };
     	    
@@ -112,50 +188,96 @@
     	        $("#history [name=harvestDate]").val(planting.harvestDate);
     	        $("#history [name=source]").val(planting.source);
     	        $("#history [name=plantas]").val(planting.plantingType);
-    	        $("#history span.plant-name").val(planting.plant);
+    	        $("#history .plant-name").text(planting.plant);
+    	        $("#history [name=plantName]").val(planting.plant);
+    	        $("#history .plant-again-link").unbind("click").click(function () { showPlant(planting); });
     	        $.mobile.changePage("#history");
     	    };
     	    
     	    $(document).ready(function () {
+    	        
+    	        itemTemplate = $(".list-template .list-item-template");
+        	    itemLinkTemplate = $(".list-template .list-link-template");
+        	    itemHeaderTemplate = $(".list-template .list-header-template");
+        	    
     	        $("#plant-date").datepicker();
     	        $("#harvest-date").datepicker();
     	        
     	        renderPlantList();
     	        renderHistoryList();
     	        $(".add-planting-form").submit(addPlanting);
+
+    	        $(".plant-search-form input").change(renderPlantList).keyup(renderPlantList);
+    	        $(".history-search-form select").change(renderHistoryList);
+    	        $(".history-search-form input").change(renderHistoryList).keyup(renderHistoryList);
     	        
-    	        $(plantings).each(function (idx, planting) {
-    	            addPlantingToMap(planting);
-    	        });
+    	        $(".month-selector .month").text(months[month] + " " + year);
+    	        $(".month-selector .last-month").click(function () { changeMonth(-1); });
+    	        $(".month-selector .next-month").click(function () { changeMonth(1); });
+    	        
+    	        $("#map .search-link").click(function () {$.mobile.changePage("#search");  renderPlantList(); });
+    	        $("#map .history-link").click(function () { $.mobile.changePage("#history"); renderHistoryList(); })
+    	        $("#map .calendar-link").click(function () { $.mobile.changePage("#calendar"); });
+    	        $("#map .layout-tools-link").click(function () { $(".layout-tools").show(); $(".plant-tools").hide() });
+    	        $("#map .plant-tools-link").click(function () { $(".plant-tools").show(); $(".layout-tools").hide() });
+    	        
+    	        renderPlantMap();
+
     	    });
     	</script>
     	
     </head> 
     <body> 
-
+        
         <div data-role="page" id="map">
-
+            
         	<div data-role="header">
         		<h1>Gardenizer</h1>
         	</div>
 
         	<div class="header-links" data-role="content" style="text-align: right;">	
-        	    <a href="#search">Add plants</a>
-        	    <a href="#history">Notes</a>
-        	    <a href="#calendar">Calendar</a>
+        	    <a class="history-link" href="javascript:;" title="View history and record notes"><img src="edit.png" alt="Notes"/></a>
+        	    <a class="calendar-link" href="javascript:;" title="View calendar and reminders"><img src="calendar.png" alt="Calendar"/></a>
+        	    <a class="plant-tools-link" href="javascript:;">Plant Mode</a>
+        	    <a class="layout-tools-link" href="javascript:;">Layout Mode</a>
         	</div>
         	
         	<div id="garden-map">
         	</div>
+        	
+        	<div id="garden-tools">
+        	    <div class="plant-tools">
+        	        <a class="search-link" href="javascript:;" data-role="button" data-icon="plus">Add Plants</a>
+                	<div class="planting-details" style="display:none">
+                	   <h2><a class="plant-detail-link" href="javascript:;">Radish</a></h2>
+                	   <p>Planting: <span class="planting-date"></span></p>
+                	   <p>Harvest: <span class="harvest-date"></span></p>
+                	   <p>Square ft: <span class="plant-square-feet"></span></p>
+                	</div>
+            	</div>
+
+            	<div class="layout-tools" style="display:none">
+            	    <p><a href="javascript:;">Garden Bed</a></p>
+            	    <p><a href="javascript:;">Lawn</a></p>
+            	    <p><a href="javascript:;">Trees</a></p>
+            	    <p><a href="javascript:;">Fence/Trellis</a></p>
+            	</div>
+
+        	</div>
+        	
         	<div class="month-selector">
-        	    <a href="javascript:;">&lt;</a>
-        	    April
-        	    <a href="javascript:;">&gt;</a>
+        	    <a class="last-month" href="javascript:;">&lt;</a>
+        	    <span class="month"></span>
+        	    <a class="next-month" href="javascript:;">&gt;</a>
+        	    <a href="javascript:alert('Not implemented');" title-"Print Garden Map"><img src="printer.png" alt="Print"/></a>
         	</div>
-        	<div class="planting-details">
-        	   <h2><a href="javascript:;">Radish</a></h2>
-        	   <p>square feet, details, etc.</p>
-        	</div>
+            <div style="display:none">
+                <ul data-role="listview" class="list-template">
+                    <li data-role="list-divider" class="list-header-template">header</li>
+                    <li class="list-item-template">item</li>
+                    <li class="list-link-template"><a href="javascript:;"></a></li>
+                </ul>
+            </div>
 
         </div>
 
@@ -169,34 +291,34 @@
         	<div data-role="content">
         	    <div class="ui-grid-a">
             	    <div class="ui-block-a">
-                	    <form>
+                	    <form class="plant-search-form">
                 	        <div data-role="fieldcontain">
-                        	    <input id="plant-name" name="plant-name" type="text" data-type="search" placeholder="Plant"/>
+                        	    <input id="plantName" name="plantName" type="text" data-type="search" placeholder="Plant"/>
                     	    </div>
                     	    <div data-role="fieldcontain">
                         	    <fieldset data-role="controlgroup" data-type="horizontal">
-                            	    <input id="full-sun" type="checkbox" checked="checked"/> 
+                            	    <input id="full-sun" name="fullSun" type="checkbox" checked="checked"/> 
                             	    <label for="full-sun">Full sun</label>
-                            	    <input id="partial-sun" type="checkbox" checked="checked"/> 
+                            	    <input id="partial-sun" name="partialSun" type="checkbox" checked="checked"/> 
                             	    <label for="partial-sun">Partial sun</label>
                         	    </fieldset>
                     	    </div>
                     	    <div data-role="fieldcontain">
                         	    <label for="harvest-time">Max time to harvest</label>
-                        	    <input id="harvest-time" type="text" style="width: 3em"/>
+                        	    <input id="harvest-time" name="harvestTime" type="text" style="width: 3em"/>
                         	    days
                     	    </div>
                     	    <div data-role="fieldcontain">
                     	        <legend>Max space</legend>
-                        	    <input id="space-horiz" type="text" style="width: 2em"/> x <input id="space-vert" type="text" style="width: 2em"> ft
+                        	    <input id="space-horiz" name="spaceHoriz" type="text" style="width: 2em"/> x 
+                        	    <input id="space-vert" name="spaceVert" type="text" style="width: 2em"> ft
                     	    </div>
                 	    </form>
             	    </div>
             	    <div class="ui-block-b">
+            	        <h2>Matching Plants</h2>
                 	    <ul data-role="listview" class="plant-list">
-                	        <li data-role="list-divider">Plants</li>
-                	        <li><a href="javascript:;">Carrot</a></li>
-                	        <li><a href="javascript:;q">Radish</a></li>
+                	        <li><a href="javascript:;"></a></li>
                 	    </ul>
             	    </div>
         	    </div>
@@ -252,6 +374,7 @@
             	                <label for="source">Plant/seed source</label>
             	                <textarea id="source" name="source"></textarea>
             	            </div>
+            	            <input type="hidden" name="plantName"/>
             	            <input type="submit" value="Add"/>
             	        </form>
             	    </div>
@@ -270,17 +393,17 @@
         	<div data-role="content">
         	    <div class="ui-grid-a">
                     <div class="ui-block-a">
-                        <form>
+                        <form class="history-search-form">
                 	        <div data-role="fieldcontain">
                     	        <label for="year" class="ui-hidden-accessible">Year</label>
-                    	        <select id="year">
+                    	        <select id="year" name="year">
                                     <option>2012</option>
                                     <option>2011</option>
                                     <option>2010</option>
                     	        </select>
                 	        </div>
                 	        <div data-role="fieldcontain">
-                    	        <input id="plant" type="text" data-type="search" placeholder="Plant" style="width:100%"/>
+                    	        <input id="plantName" name="plantName" type="text" data-type="search" placeholder="Plant" style="width:100%"/>
                 	        </div>
                         </form>
                         <ul data-role="listview" data-inset="true" class="history-list" style="margin-right: 20px">
@@ -312,7 +435,7 @@
                     	        <textarea id="notes"></textarea>
                 	        </div>
             	        </form>
-            	        <a href="index.html" data-role="button" data-icon="plus">Plant Again</a>
+            	        <a href="javascript:;" class="plant-again-link" data-role="button" data-icon="plus">Plant Again</a>
             	        <h2>Plant Information</h2>
             	        <p>plant infos!</p>
                     </div>

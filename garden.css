@@ -1,5 +1,5 @@
 #garden-map {
-  width: 1200px;
+  width: 800px;
   height: 500px;
   border: thin solid black;
   margin-left: 10px;
@@ -10,9 +10,14 @@
   position: absolute;
 }
 
+#garden-tools {
+  width: 400px;
+  height: 500px;
+  margin-left: 850px;
+  position: absolute;
+}
+
 #garden-map .plant-area {
-  height: 50px;
-  width: 50px;
   opacity: 0.8;
   border: none;
   background: none;
@@ -28,11 +33,6 @@
 }
 
 .month-selector {
-  left: 20px;
-  top: 600px;
-  position: absolute;
-}
-.planting-details {
   left: 20px;
   top: 600px;
   position: absolute;
