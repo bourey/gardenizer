@@ -21,13 +21,13 @@
     	    
     	    // some test data
     	    plantings = [
-    	        { areaType: "fill-area", harvestDate: "05/01/2012", plantDate: "04/01/2012", plantingType: "seed", source: "Swanson's", plant: "Carrot", position: { left: 0, top: 0, width: 100, height: 500 } },
-    	        { areaType: "fill-area", harvestDate: "06/01/2012", plantDate: "04/01/2012", plantingType: "seed", source: "Swanson's", plant: "Radish", position: { left: 0, top: 0, width: 100, height: 500 } },
-    	        { areaType: "single-plant", harvestDate: "09/01/2012", plantDate: "06/01/2012", plantingType: "seed", source: "Swanson's", plant: "Tomato", position: { left: 100, top: 0, width: 200, height: 200 } }
+    	        { areaType: "fill-area", harvestDate: "05/01/2012", plantDate: "04/01/2012", plantingType: "seed", source: "Swanson's", plant: "Carrot", variety: "General", position: { left: 0, top: 0, width: 100, height: 500 }, rating: 3 },
+    	        { areaType: "fill-area", harvestDate: "06/01/2012", plantDate: "04/01/2012", plantingType: "seed", source: "Swanson's", plant: "Radish", variety: "Breakfast", position: { left: 0, top: 0, width: 100, height: 500 }, rating: 3 },
+    	        { areaType: "single-plant", harvestDate: "09/01/2012", plantDate: "06/01/2012", plantingType: "seed", source: "Swanson's", plant: "Tomato", variety: "Early Girl", position: { left: 100, top: 0, width: 200, height: 200 }, rating: 4 }
     	    ];
 
     	    var showPlantingDetails = function(planting) {
-    	        $("#map .plant-detail-link").text(planting.plant).unbind("click").click(function () { showPlantingNotes(planting); });
+    	        $("#map .plant-detail-link").text(planting.plant + ", " + planting.variety).unbind("click").click(function () { showPlantingNotes(planting); });
  	            $("#map .planting-date").text(planting.plantDate);
  	            $("#map .harvest-date").text(planting.harvestDate);
  	            $("#map .plant-square-feet").text((planting.position.width * planting.position.height)/2500);
@@ -137,9 +137,10 @@
     	        var plantList = $("#search .plant-list");
     	        $(plants).each(function (idx, plant) {
     	            if (
-    	                (!searchText || plant.name.toLowerCase().indexOf(searchText.toLowerCase()) >= 0) &&
-    	                ((full == plant.full) || (partial == plant.partial)) &&
-    	                (!time || plant.daysToHarvest <= time)
+        	                (!searchText || plant.name.toLowerCase().indexOf(searchText.toLowerCase()) >= 0) &&
+        	                ((full == plant.full) || (partial == plant.partial)) &&
+        	                (!time || plant.daysToHarvest <= time) &&
+        	                ((!vert || !horiz) || (vert*12 >= plant.diameter && horiz*12 >= plant.diameter))
     	                ) {
     	            
         	            var newPlant = itemLinkTemplate.clone();
@@ -177,7 +178,18 @@
     	                (!searchText || planting.plant.toLowerCase().indexOf(searchText) >= 0)
     	                ) {
         	            var newPlant = itemLinkTemplate.clone();
-        	            newPlant.find("a").html("<h3>" + planting.plant + "</h3><p>Stars" + planting.plantDate + "</p>").click(function () { showPlantingNotes(planting); });
+        	            var p = $(document.createElement("div"));
+        	            p.append($(document.createElement("span")).addClass("plant-history-item-name")
+        	                .text(planting.plant + ", " + planting.variety));
+        	            p.append($(document.createElement("span")).addClass("plant-history-item-date")
+        	                .text(planting.plantDate));
+        	            if (planting.rating) {
+            	            var stars = $(document.createElement("span")).addClass("plant-history-item-rating");
+        	            for (var i = 1; i < 5; i++)
+        	                stars.append($(document.createElement("img")).attr("src", i <= planting.rating ? "star-full.png" : "star-empty.png"));
+        	                p.append(stars);
+    	                }
+        	            newPlant.find("a").append(p).click(function () { showPlantingNotes(planting); });
         	            historyList.append(newPlant);
     	            }
     	        });
@@ -188,9 +200,12 @@
     	        $("#history [name=harvestDate]").val(planting.harvestDate);
     	        $("#history [name=source]").val(planting.source);
     	        $("#history [name=plantas]").val(planting.plantingType);
+    	        $("#history [name=rating]").val(planting.rating);
     	        $("#history .plant-name").text(planting.plant);
     	        $("#history [name=plantName]").val(planting.plant);
     	        $("#history .plant-again-link").unbind("click").click(function () { showPlant(planting); });
+    	        $("#history .star-rating img:not(gt(" + (planting.rating-1) + "))").attr("src", "star-full.png");
+    	        $("#history .star-rating img:gt(" + (planting.rating-1) + ")").attr("src", "star-empty.png");
     	        $.mobile.changePage("#history");
     	    };
     	    
@@ -203,8 +218,6 @@
     	        $("#plant-date").datepicker();
     	        $("#harvest-date").datepicker();
     	        
-    	        renderPlantList();
-    	        renderHistoryList();
     	        $(".add-planting-form").submit(addPlanting);
 
     	        $(".plant-search-form input").change(renderPlantList).keyup(renderPlantList);
@@ -215,11 +228,18 @@
     	        $(".month-selector .last-month").click(function () { changeMonth(-1); });
     	        $(".month-selector .next-month").click(function () { changeMonth(1); });
     	        
-    	        $("#map .search-link").click(function () {$.mobile.changePage("#search");  renderPlantList(); });
+    	        $("#map .search-link").click(function () { $.mobile.changePage("#search");  renderPlantList(); });
     	        $("#map .history-link").click(function () { $.mobile.changePage("#history"); renderHistoryList(); })
     	        $("#map .calendar-link").click(function () { $.mobile.changePage("#calendar"); });
     	        $("#map .layout-tools-link").click(function () { $(".layout-tools").show(); $(".plant-tools").hide() });
     	        $("#map .plant-tools-link").click(function () { $(".plant-tools").show(); $(".layout-tools").hide() });
+    	        
+    	        $("#history form .star-rating img").click(function () {
+    	            var rating = Number($(this).index("#history form .star-rating img"))+1;
+    	            $("#history form [name=rating]").val(rating);
+        	        $("#history .star-rating img:not(gt(" + (rating-1) + "))").attr("src", "star-full.png");
+        	        $("#history .star-rating img:gt(" + (rating-1) + ")").attr("src", "star-empty.png");
+    	        });
     	        
     	        renderPlantMap();
 
@@ -434,6 +454,13 @@
                     	        <label for="notes">Notes</label>
                     	        <textarea id="notes"></textarea>
                 	        </div>
+            	            <div class="star-rating">
+            	                <img src="star-empty.png"/>
+            	                <img src="star-empty.png"/>
+            	                <img src="star-empty.png"/>
+            	                <img src="star-empty.png"/>
+            	            </div>
+            	            <input type="hidden" name="rating"/>
             	        </form>
             	        <a href="javascript:;" class="plant-again-link" data-role="button" data-icon="plus">Plant Again</a>
             	        <h2>Plant Information</h2>
