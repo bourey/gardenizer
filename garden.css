@@ -51,3 +51,7 @@
 .has-warnings .warning-light {
   background-color: red;
 }
+
+.selected-mode {
+  border: thin solid black;
+}

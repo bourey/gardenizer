@@ -268,6 +268,8 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	            }
     	            $(".plant-variety-select").append(option);
     	        });
+    	        $(".plant-variety-select").val(selectedVariety);
+    	        $(".plant-variety-select").parent().find(".ui-btn-text").text(selectedVariety);
     	        $("#add [name=plantVariety]").val(selectedVariety);
     	        if (input.plant) {
         	        $("#add [name=plantDate]").val(input.plantDateStr);
@@ -375,7 +377,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	                time = reminder.date.getFullYear()*100+reminder.date.getMonth();
     	            }
     	            var item = itemLinkTemplate.clone();
-    	            $(item).find("a").text(reminder.date.getMonth()+1 + "/" + reminder.date.getDate() + ": " + reminder.message).click(function () { $.changePage("#history"); renderHistoryList(); showPlantingNotes(reminder.planting); });
+    	            $(item).find("a").text(reminder.date.getMonth()+1 + "/" + reminder.date.getDate() + ": " + reminder.message).click(function () { $.mobile.changePage("#history"); renderHistoryList(); showPlantingNotes(reminder.planting); });
     	            list.append(item);
     	        });
     	        $.mobile.changePage("#calendar");
@@ -405,8 +407,18 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	        $("#map .search-link").click(function () { $.mobile.changePage("#search");  renderPlantList(); });
     	        $("#map .history-link").click(function () { $.mobile.changePage("#history"); renderHistoryList(); })
     	        $("#map .calendar-link").click(function () { $.mobile.changePage("#calendar"); renderCalendarReminders(); });
-    	        $("#map .layout-tools-link").click(function () { $(".layout-tools").show(); $(".plant-tools").hide() });
-    	        $("#map .plant-tools-link").click(function () { $(".plant-tools").show(); $(".layout-tools").hide() });
+    	        $("#map .layout-tools-link").click(function () { 
+    	            $(".layout-tools").show(); 
+    	            $(".plant-tools").hide();
+    	            $("#map .plant-tools-link").removeClass("selected-mode"); 
+    	            $("#map .layout-tools-link").addClass("selected-mode"); 
+    	        });
+    	        $("#map .plant-tools-link").click(function () { 
+    	            $(".plant-tools").show(); 
+    	            $(".layout-tools").hide(); 
+    	            $("#map .plant-tools-link").addClass("selected-mode"); 
+    	            $("#map .layout-tools-link").removeClass("selected-mode"); 
+    	        });
     	        
     	        $("#history form .star-rating img").click(function () {
     	            var rating = Number($(this).index("#history form .star-rating img"))+1;
@@ -432,7 +444,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
         	<div class="header-links" data-role="content" style="text-align: right;">	
         	    <a class="history-link" href="javascript:;" title="View history and record notes"><img src="edit.png" alt="Notes"/></a>
         	    <a class="calendar-link" href="javascript:;" title="View calendar and reminders"><img src="calendar.png" alt="Calendar"/></a>
-        	    <a class="plant-tools-link" href="javascript:;">Plant Mode</a>
+        	    <a class="plant-tools-link selected-mode" href="javascript:;">Plant Mode</a>
         	    <a class="layout-tools-link" href="javascript:;">Layout Mode</a>
         	</div>
         	
