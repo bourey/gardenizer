@@ -43,6 +43,7 @@
     	    $(plantings).each(function (idx, planting) {
     	        planting.harvestDate = stringToDate(planting.harvestDateStr);
     	        planting.plantDate = stringToDate(planting.plantDateStr);
+    	        console.log(planting);
     	    });
 
     	    var showPlantingDetails = function(planting) {
@@ -296,9 +297,9 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
     	        $(".plant-variety-select").parent().find(".ui-btn-text").text(selectedVariety);
     	        $("#add [name=plantVariety]").val(selectedVariety);
     	        if (input.plant) {
-    	            var plantDate = input.plantDate;
+    	            var plantDate = new Date(input.plantDate.getTime());
     	            plantDate.setFullYear(2012);
-    	            var harvestDate = input.harvestDate;
+    	            var harvestDate = new Date(input.harvestDate.getTime());
     	            harvestDate.setFullYear(2012);
         	        $("#add [name=plantDate]").val(dateToString(plantDate));
         	        $("#add [name=harvestDate]").val(dateToString(harvestDate));
@@ -389,13 +390,18 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
     	    
     	    var renderCalendarReminders = function () {
     	        var reminders = [];
+    	        console.log(plantings);
     	        $(plantings).each(function (idx, planting) {
     	            if (planting.plantDate.getFullYear() == 2012) {
+    	                console.log(planting);
         	            reminders.push({ date: planting.plantDate, message: "Plant " + planting.plant, planting: planting });
         	            reminders.push({ date: planting.harvestDate, message: "Harvest " + planting.plant, planting: planting });
         	            $(plants[planting.plant].reminders).each(function (idx, reminder) {
             	            reminders.push({ date: new Date(planting.plantDate.getTime() + reminder.days*24*60*60*1000), message: reminder.message, planting: planting });
         	            });
+        	            if (plants[planting.plant].needsFertilizer) {
+        	                reminders.push({ date: new Date(planting.plantDate.getTime() - 7*24*60*60*1000), message: "Apply fertilizer in preparation for " + planting.plant + " planting"});
+        	            }
     	            }
     	        });
     	        reminders.sort(sortReminders);
