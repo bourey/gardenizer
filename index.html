@@ -45,7 +45,7 @@
     	    });
 
     	    var showPlantingDetails = function(planting) {
-    	        $("#map .plant-detail-link").text(planting.plant + ", " + planting.variety).unbind("click").click(function () { showPlantingNotes(planting); });
+    	        $("#map .plant-detail-link").text(planting.plant + ", " + planting.variety).unbind("click").click(function () { showPlantingNotes(planting); renderHistoryList(); });
  	            $("#map .planting-date").text(planting.plantDateStr);
  	            $("#map .harvest-date").text(planting.harvestDateStr);
  	            $("#map .plant-square-feet").text((planting.position.width * planting.position.height)/2500);
@@ -87,10 +87,10 @@
     	    };
     	    
     	    var dateOverlaps = function(planting1, planting2) {
-                var plant1 = stringToDate(planting1.plantDateStr);
-                var plant2 = stringToDate(planting2.plantDateStr);
-                var harvest1 = stringToDate(planting1.harvestDateStr);
-                var harvest2 = stringToDate(planting2.harvestDateStr);
+                var plant1 = planting1.plantDate;
+                var plant2 = planting2.plantDate;
+                var harvest1 = planting1.harvestDate;
+                var harvest2 = planting2.harvestDate;
                 return !(harvest2.getTime() <= plant1.getTime() || harvest1.getTime() <= plant2.getTime());
     	    };
     	    
@@ -207,7 +207,9 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
                     areaType: $(form.addby).val(),
                     plantingType: $(form.plantas).val(),
                     plantDateStr: $(form.plantDate).val(),
+                    plantDate : stringToDate($(form.plantDate).val()),
                     harvestDateStr: $(form.harvestDate).val(),
+                    harvestDate : stringToDate($(form.harvestDate).val()),
                     variety: $(form.plantVariety).val(),
                     source: $(form.source).val(),
                     position: { top: 0, left: 0, width: 50, height: 50 }
@@ -251,11 +253,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	    var showPlant = function (input) {
     	        var currentPlant, selectedVariety;
     	        if (input.plant) {
-    	            $(plants).each(function (idx, plant) {
-    	                if (plant.name == input.plant) {
-    	                    currentPlant = plant;
-    	                }
-    	            });
+    	            currentPlant = plants[input.plant];
     	            selectedVariety = input.variety;
     	        } else {
     	            currentPlant = input;
@@ -291,7 +289,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	    };
     	    
     	    var sortPlantings = function (a, b) {
-    	        return stringToDate(b.plantDateStr).getTime() - stringToDate(a.plantDateStr).getTime();
+    	        return b.plantDate.getTime() - a.plantDate.getTime();
     	    };
     	        	    
     	    var renderHistoryList = function () {
@@ -304,7 +302,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	        var y = "";
     	        var first = true;
     	        $(plantings).each(function (idx, planting) {
-	                var plantYear = stringToDate(planting.plantDateStr).getFullYear();
+	                var plantYear = planting.plantDate.getFullYear();
     	            if (
     	                (!year || year == plantYear) &&
     	                (!searchText || planting.plant.toLowerCase().indexOf(searchText) >= 0)
@@ -373,7 +371,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	                time = reminder.date.getFullYear()*100+reminder.date.getMonth();
     	            }
     	            var item = itemLinkTemplate.clone();
-    	            $(item).find("a").text(reminder.date.getMonth()+1 + "/" + reminder.date.getDate() + ": " + reminder.message).click(function () { showPlantingNotes(reminder.planting); });
+    	            $(item).find("a").text(reminder.date.getMonth()+1 + "/" + reminder.date.getDate() + ": " + reminder.message).click(function () { showPlantingNotes(reminder.planting);renderHistoryList(); });
     	            list.append(item);
     	        });
     	        $.mobile.changePage("#calendar");
@@ -666,12 +664,18 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
                     <div class="ui-block-b">
                         <form>
                 	        <div data-role="fieldcontain">
-                    	        <label for="planted">Weekly task email</label>
-                    	        <input id="planted" name="plantDate" type="text"/>
+                    	        <label for="task-email">Weekly task email</label>
+                                <select name="task-email" id="task-email" data-role="slider">
+                                	<option value="off">Off</option>
+                                	<option value="on">On</option>
+                                </select>
                 	        </div>                            
                 	        <div data-role="fieldcontain">
-                    	        <label for="planted">Watering alerts</label>
-                    	        <input id="planted" name="plantDate" type="text"/>
+                    	        <label for="alerts">Watering alerts</label>
+                                <select name="alerts" id="alerts" data-role="slider">
+                                	<option value="off">Off</option>
+                                	<option value="on">On</option>
+                                </select>
                 	        </div>                            
                         </form>
                     </div>
