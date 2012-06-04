@@ -26,10 +26,7 @@
     	    
     	    // some test data
     	    plantings = [
-	        { areaType: "single-plant", harvestDateStr: "09/01/2011", plantDateStr: "06/01/2011", plantingType: "seed", source: "Swanson's", plant: "Tomato", variety: "Early Girl", position: { left: 100, top: 0, width: 200, height: 200 }, rating: 4 },
-    	        { areaType: "fill-area", harvestDateStr: "07/01/2012", plantDateStr: "04/01/2012", plantingType: "seed", source: "Swanson's", plant: "Carrot", variety: "General", position: { left: 0, top: 0, width: 100, height: 500 }, rating: 3 },
-    	        { areaType: "fill-area", harvestDateStr: "05/15/2012", plantDateStr: "04/01/2012", plantingType: "seed", source: "Swanson's", plant: "Radish", variety: "Breakfast", position: { left: 0, top: 0, width: 100, height: 500 }, rating: 3 },
-    	        { areaType: "single-plant", harvestDateStr: "09/01/2012", plantDateStr: "06/01/2012", plantingType: "seed", source: "Swanson's", plant: "Tomato", variety: "Early Girl", position: { left: 100, top: 0, width: 200, height: 200 }, rating: 4 }
+	        { areaType: "single-plant", harvestDateStr: "09/01/2011", plantDateStr: "06/01/2011", plantingType: "seed", source: "Swanson's", plant: "Tomato", variety: "Early Girl", position: { left: 100, top: 0, width: 200, height: 200 }, rating: 4, notes: "Great variety! Want to plant again next year" }
     	    ];
     	    
     	    var partialShadeArea = { top: 250, left: 700, width: 100, height: 250 };
@@ -45,7 +42,7 @@
     	    });
 
     	    var showPlantingDetails = function(planting) {
-    	        $("#map .plant-detail-link").text(planting.plant + ", " + planting.variety).unbind("click").click(function () { showPlantingNotes(planting); renderHistoryList(); });
+    	        $("#map .plant-detail-link").text(planting.plant + ", " + planting.variety).unbind("click").click(function () { $.mobile.changePage("#history"); renderHistoryList(); showPlantingNotes(planting); });
  	            $("#map .planting-date").text(planting.plantDateStr);
  	            $("#map .harvest-date").text(planting.harvestDateStr);
  	            $("#map .plant-square-feet").text((planting.position.width * planting.position.height)/2500);
@@ -277,7 +274,11 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
         	        $("#add [name=harvestDate]").val(input.harvestDateStr);
         	        $("#add [name=source]").val(input.source);
         	        $("#add [name=plantas]").val(input.plantingType);
+    	        } else {
+        	        $("#add [name=source]").val("");
     	        }
+    	        $("#add [name=plantDate]").val("");
+    	        $("#add [name=harvestDate]").val("");
     	        
     	        $("#add [name=plantDate]").change(function () {
     	            var planting, harvest, components;
@@ -348,7 +349,6 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	        $("#history .plant-again-link").unbind("click").click(function () { showPlant(planting); });
     	        $("#history .star-rating img:not(gt(" + (planting.rating-1) + "))").attr("src", "star-full.png");
     	        $("#history .star-rating img:gt(" + (planting.rating-1) + ")").attr("src", "star-empty.png");
-    	        $.mobile.changePage("#history");
     	    };
     	    
     	    var sortReminders = function (a, b) {
@@ -375,7 +375,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	                time = reminder.date.getFullYear()*100+reminder.date.getMonth();
     	            }
     	            var item = itemLinkTemplate.clone();
-    	            $(item).find("a").text(reminder.date.getMonth()+1 + "/" + reminder.date.getDate() + ": " + reminder.message).click(function () { showPlantingNotes(reminder.planting);renderHistoryList(); });
+    	            $(item).find("a").text(reminder.date.getMonth()+1 + "/" + reminder.date.getDate() + ": " + reminder.message).click(function () { $.changePage("#history"); renderHistoryList(); showPlantingNotes(reminder.planting); });
     	            list.append(item);
     	        });
     	        $.mobile.changePage("#calendar");
@@ -455,10 +455,10 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
             	</div>
 
             	<div class="layout-tools" style="display:none">
-            	    <p><a href="javascript:;">Garden Bed</a></p>
-            	    <p><a href="javascript:;">Lawn</a></p>
-            	    <p><a href="javascript:;">Trees</a></p>
-            	    <p><a href="javascript:;">Fence/Trellis</a></p>
+            	    <p><a href="javascript:alert('Not implemented');">Garden Bed</a></p>
+            	    <p><a href="javascript:alert('Not implemented');">Lawn</a></p>
+            	    <p><a href="javascript:alert('Not implemented');">Trees</a></p>
+            	    <p><a href="javascript:alert('Not implemented');">Fence/Trellis</a></p>
             	</div>
 
         	</div>
@@ -551,7 +551,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
                 	                <label for="fill-area">Fill area</label>
                 	                <input id="fill-area" name="addby" value="fill-area" type="radio" checked="checked"/>
                 	                <label for="single-plant">Single plant</label>
-                	                <input id="single-plant" name="addby" value="single-plant" type="radio"/>
+                	                <input id="single-plant" name="addby" value="single-plant" type="radio" onclick="javascript:alert('Not implemented');"/>
                 	            </fieldset>
             	            </div>
                     	    <div data-role="fieldcontain">
