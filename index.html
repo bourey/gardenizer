@@ -35,6 +35,10 @@
 	            var components = string.split("/");
 	            return new Date(components[2], components[0]-1, components[1], 0, 0, 0, 0);
     	    };
+    	    
+    	    var dateToString = function(date) {
+                return (date.getMonth() < 9 ? "0" + (date.getMonth()+1) : date.getMonth()) + "/" + (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) + "/" + date.getFullYear();
+    	    };
     	        	    
     	    $(plantings).each(function (idx, planting) {
     	        planting.harvestDate = stringToDate(planting.harvestDateStr);
@@ -138,14 +142,14 @@
                       .css("top", planting.position ? planting.position.top : 0)
                   .click(function () { showPlantingDetails(planting); });
                 plant.append($(document.createElement("div")).addClass("warning-light"));
-plant.append($(document.createElement("a")).addClass("planting-copy-link").text("c").click(function () {
+plant.append($(document.createElement("a")).addClass("planting-copy-link").click(function () {
                     plantings.push(planting);
                     renderPlantMap();
-                }));
-                plant.append($(document.createElement("a")).addClass("planting-delete-link").text("x").click(function () {
+                }).append($(document.createElement("img")).attr("src", "copy.png")));
+                plant.append($(document.createElement("a")).addClass("planting-delete-link").click(function () {
                     plantings.splice($.inArray(planting, plantings), 1);
                     renderPlantMap();
-                }));
+                }).append($(document.createElement("img")).attr("src", "remove.png")));
                 var warnings = getWarnings(planting);
                 if ($(warnings).size() > 0) {
                     $(plant).addClass("has-warnings");
@@ -272,21 +276,25 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	        $(".plant-variety-select").parent().find(".ui-btn-text").text(selectedVariety);
     	        $("#add [name=plantVariety]").val(selectedVariety);
     	        if (input.plant) {
-        	        $("#add [name=plantDate]").val(input.plantDateStr);
-        	        $("#add [name=harvestDate]").val(input.harvestDateStr);
+    	            var plantDate = input.plantDate;
+    	            plantDate.setFullYear(2012);
+    	            var harvestDate = input.harvestDate;
+    	            harvestDate.setFullYear(2012);
+        	        $("#add [name=plantDate]").val(dateToString(plantDate));
+        	        $("#add [name=harvestDate]").val(dateToString(harvestDate));
         	        $("#add [name=source]").val(input.source);
         	        $("#add [name=plantas]").val(input.plantingType);
     	        } else {
         	        $("#add [name=source]").val("");
+        	        $("#add [name=plantDate]").val(dateToString(new Date()));
+        	        $("#add [name=harvestDate]").val(dateToString(new Date(new Date().getTime() + currentPlant.daysToHarvest*24*60*60*1000)));
     	        }
-    	        $("#add [name=plantDate]").val("");
-    	        $("#add [name=harvestDate]").val("");
     	        
     	        $("#add [name=plantDate]").change(function () {
     	            var planting, harvest, components;
     	            planting = stringToDate($(this).val());
     	            harvest = new Date(planting.getTime() + currentPlant.daysToHarvest*24*60*60*1000);
-    	            $("#add [name=harvestDate]").val((harvest.getMonth() < 9 ? "0" + (harvest.getMonth()+1) : harvest.getMonth()) + "/" + (harvest.getDate() < 10 ? "0" + harvest.getDate() : harvest.getDate()) + "/" + harvest.getFullYear());
+    	            $("#add [name=harvestDate]").val(dateToString(harvest));
     	        });
     	        
     	        $("#add [name=plantName]").val(currentPlant.name);
