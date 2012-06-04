@@ -81,6 +81,14 @@
   margin: -15px 0 0;
 }
 
+.plant-search-form {
+  padding-left: 8px;
+}
+
+#search label.ui-input-text {
+  vertical-align: middle;
+}
+
 .ui-li {
   border-left-width: 1px;
   border-right-width: 1px;
