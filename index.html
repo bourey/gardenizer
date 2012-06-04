@@ -20,18 +20,32 @@
     	    year = 2012;
     	    month = 3;
     	    
+    	    $(plants).each(function (idx, plant) {
+    	        plants[plant.name] = plants[idx];
+    	    });
+    	    
     	    // some test data
     	    plantings = [
-	        { areaType: "single-plant", harvestDate: "09/01/2011", plantDate: "06/01/2011", plantingType: "seed", source: "Swanson's", plant: "Tomato", variety: "Early Girl", position: { left: 100, top: 0, width: 200, height: 200 }, rating: 4 },
-    	        { areaType: "fill-area", harvestDate: "07/01/2012", plantDate: "04/01/2012", plantingType: "seed", source: "Swanson's", plant: "Carrot", variety: "General", position: { left: 0, top: 0, width: 100, height: 500 }, rating: 3 },
-    	        { areaType: "fill-area", harvestDate: "05/15/2012", plantDate: "04/01/2012", plantingType: "seed", source: "Swanson's", plant: "Radish", variety: "Breakfast", position: { left: 0, top: 0, width: 100, height: 500 }, rating: 3 },
-    	        { areaType: "single-plant", harvestDate: "09/01/2012", plantDate: "06/01/2012", plantingType: "seed", source: "Swanson's", plant: "Tomato", variety: "Early Girl", position: { left: 100, top: 0, width: 200, height: 200 }, rating: 4 }
+	        { areaType: "single-plant", harvestDateStr: "09/01/2011", plantDateStr: "06/01/2011", plantingType: "seed", source: "Swanson's", plant: "Tomato", variety: "Early Girl", position: { left: 100, top: 0, width: 200, height: 200 }, rating: 4 },
+    	        { areaType: "fill-area", harvestDateStr: "07/01/2012", plantDateStr: "04/01/2012", plantingType: "seed", source: "Swanson's", plant: "Carrot", variety: "General", position: { left: 0, top: 0, width: 100, height: 500 }, rating: 3 },
+    	        { areaType: "fill-area", harvestDateStr: "05/15/2012", plantDateStr: "04/01/2012", plantingType: "seed", source: "Swanson's", plant: "Radish", variety: "Breakfast", position: { left: 0, top: 0, width: 100, height: 500 }, rating: 3 },
+    	        { areaType: "single-plant", harvestDateStr: "09/01/2012", plantDateStr: "06/01/2012", plantingType: "seed", source: "Swanson's", plant: "Tomato", variety: "Early Girl", position: { left: 100, top: 0, width: 200, height: 200 }, rating: 4 }
     	    ];
+
+    	    var stringToDate = function(string) {
+	            var components = string.split("/");
+	            return new Date(components[2], components[0]-1, components[1], 0, 0, 0, 0);
+    	    };
+    	        	    
+    	    $(plantings).each(function (idx, planting) {
+    	        planting.harvestDate = stringToDate(planting.harvestDateStr);
+    	        planting.plantDate = stringToDate(planting.plantDateStr);
+    	    });
 
     	    var showPlantingDetails = function(planting) {
     	        $("#map .plant-detail-link").text(planting.plant + ", " + planting.variety).unbind("click").click(function () { showPlantingNotes(planting); });
- 	            $("#map .planting-date").text(planting.plantDate);
- 	            $("#map .harvest-date").text(planting.harvestDate);
+ 	            $("#map .planting-date").text(planting.plantDateStr);
+ 	            $("#map .harvest-date").text(planting.harvestDateStr);
  	            $("#map .plant-square-feet").text((planting.position.width * planting.position.height)/2500);
  	            $("#map .planting-details").show();
  	            
@@ -67,16 +81,11 @@
  	            return warnings;
     	    };
     	    
-    	    var stringToDate = function(string) {
-	            var components = string.split("/");
-	            return new Date(components[2], components[0]-1, components[1], 0, 0, 0, 0);
-    	    };
-    	    
     	    var dateOverlaps = function(planting1, planting2) {
-                var plant1 = stringToDate(planting1.plantDate);
-                var plant2 = stringToDate(planting2.plantDate);
-                var harvest1 = stringToDate(planting1.harvestDate);
-                var harvest2 = stringToDate(planting2.harvestDate);
+                var plant1 = stringToDate(planting1.plantDateStr);
+                var plant2 = stringToDate(planting2.plantDateStr);
+                var harvest1 = stringToDate(planting1.harvestDateStr);
+                var harvest2 = stringToDate(planting2.harvestDateStr);
                 return !(harvest2.getTime() <= plant1.getTime() || harvest1.getTime() <= plant2.getTime());
     	    };
     	    
@@ -107,8 +116,8 @@
     	        $("#garden-map").html("");
     	        $(plantings).each(function (idx, planting) { 
     	            if (
-    	                ((planting.plantDate.split("/")[2]*100+(planting.plantDate.split("/")[0]-1)) <= (year*100+month)) &&
-    	                (!planting.harvestDate || ((planting.harvestDate.split("/")[2]*100+(planting.harvestDate.split("/")[0]-1)) >= (year*100+month)))
+    	                ((planting.plantDateStr.split("/")[2]*100+(planting.plantDateStr.split("/")[0]-1)) <= (year*100+month)) &&
+    	                (!planting.harvestDateStr || ((planting.harvestDateStr.split("/")[2]*100+(planting.harvestDateStr.split("/")[0]-1)) >= (year*100+month)))
     	                ) {
     	                addPlantingToMap(planting);
     	            }
@@ -192,16 +201,16 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	            plant: $(form.plantName).val(),
                     areaType: $(form.addby).val(),
                     plantingType: $(form.plantas).val(),
-                    plantDate: $(form.plantDate).val(),
-                    harvestDate: $(form.harvestDate).val(),
+                    plantDateStr: $(form.plantDate).val(),
+                    harvestDateStr: $(form.harvestDate).val(),
                     variety: $(form.plantVariety).val(),
                     source: $(form.source).val(),
                     position: { top: 0, left: 0, width: 50, height: 50 }
     	        };
     	        plantings.push(planting);
     	        $.mobile.changePage("#map");
-    	        month = planting.plantDate.split("/")[0]-1;
-    	        year = planting.plantDate.split("/")[2];
+    	        month = planting.plantDateStr.split("/")[0]-1;
+    	        year = planting.plantDateStr.split("/")[2];
     	        $(".month-selector .month").text(months[month] + " " + year);
     	        renderPlantMap();
     	        return false;
@@ -259,8 +268,8 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	        });
     	        $("#add [name=plantVariety]").val(selectedVariety);
     	        if (input.plant) {
-        	        $("#add [name=plantDate]").val(input.plantDate);
-        	        $("#add [name=harvestDate]").val(input.harvestDate);
+        	        $("#add [name=plantDate]").val(input.plantDateStr);
+        	        $("#add [name=harvestDate]").val(input.harvestDateStr);
         	        $("#add [name=source]").val(input.source);
         	        $("#add [name=plantas]").val(input.plantingType);
     	        }
@@ -277,7 +286,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	    };
     	    
     	    var sortPlantings = function (a, b) {
-    	        return stringToDate(b.plantDate).getTime() - stringToDate(a.plantDate).getTime();
+    	        return stringToDate(b.plantDateStr).getTime() - stringToDate(a.plantDateStr).getTime();
     	    };
     	        	    
     	    var renderHistoryList = function () {
@@ -290,7 +299,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	        var y = "";
     	        var first = true;
     	        $(plantings).each(function (idx, planting) {
-	                var plantYear = stringToDate(planting.plantDate).getFullYear();
+	                var plantYear = stringToDate(planting.plantDateStr).getFullYear();
     	            if (
     	                (!year || year == plantYear) &&
     	                (!searchText || planting.plant.toLowerCase().indexOf(searchText) >= 0)
@@ -304,7 +313,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
         	            p.append($(document.createElement("span")).addClass("plant-history-item-name")
         	                .text(planting.plant + ", " + planting.variety));
         	            p.append($(document.createElement("span")).addClass("plant-history-item-date")
-        	                .text(planting.plantDate));
+        	                .text(planting.plantDateStr));
         	            if (planting.rating) {
             	            var stars = $(document.createElement("span")).addClass("plant-history-item-rating");
         	            for (var i = 1; i < 5; i++)
@@ -322,8 +331,8 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	    };
     	    
     	    var showPlantingNotes = function (planting) {
-    	        $("#history [name=plantDate]").val(planting.plantDate);
-    	        $("#history [name=harvestDate]").val(planting.harvestDate);
+    	        $("#history [name=plantDate]").val(planting.plantDateStr);
+    	        $("#history [name=harvestDate]").val(planting.harvestDateStr);
     	        $("#history [name=source]").val(planting.source);
     	        $("#history [name=plantas]").val(planting.plantingType);
     	        $("#history [name=rating]").val(planting.rating);
@@ -333,6 +342,36 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	        $("#history .star-rating img:not(gt(" + (planting.rating-1) + "))").attr("src", "star-full.png");
     	        $("#history .star-rating img:gt(" + (planting.rating-1) + ")").attr("src", "star-empty.png");
     	        $.mobile.changePage("#history");
+    	    };
+    	    
+    	    var sortReminders = function (a, b) {
+    	        return a.date.getTime() - b.date.getTime();
+    	    };
+    	    
+    	    var renderCalendarReminders = function () {
+    	        var reminders = [];
+    	        $(plantings).each(function (idx, planting) {
+    	            if (planting.plantDate.getFullYear() == 2012) {
+        	            reminders.push({ date: planting.plantDate, message: "Plant " + planting.plant });
+        	            reminders.push({ date: planting.harvestDate, message: "Harvest " + planting.plant });
+        	            $(plants[planting.plant].reminders).each(function (idx, reminder) {
+            	            reminders.push({ date: new Date(planting.plantDate.getTime() + reminder.days*24*60*60*1000), message: reminder.message });
+        	            });
+    	            }
+    	        });
+    	        reminders.sort(sortReminders);
+    	        var time = "";
+    	        var list = $(".reminder-list").html("");
+    	        $(reminders).each(function (idx, reminder) {
+    	            if (time != reminder.date.getFullYear()*100+reminder.date.getMonth()) {
+    	                list.append(itemHeaderTemplate.clone().text(months[reminder.date.getMonth()] + " " + reminder.date.getFullYear()));
+    	                time = reminder.date.getFullYear()*100+reminder.date.getMonth();
+    	            }
+    	            var item = itemLinkTemplate.clone();
+    	            $(item).find("a").text(reminder.date.getMonth()+1 + "/" + reminder.date.getDate() + ": " + reminder.message);
+    	            list.append(item);
+    	        });
+    	        $.mobile.changePage("#calendar");
     	    };
     	    
     	    $(document).ready(function () {
@@ -358,7 +397,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	        
     	        $("#map .search-link").click(function () { $.mobile.changePage("#search");  renderPlantList(); });
     	        $("#map .history-link").click(function () { $.mobile.changePage("#history"); renderHistoryList(); })
-    	        $("#map .calendar-link").click(function () { $.mobile.changePage("#calendar"); });
+    	        $("#map .calendar-link").click(function () { $.mobile.changePage("#calendar"); renderCalendarReminders(); });
     	        $("#map .layout-tools-link").click(function () { $(".layout-tools").show(); $(".plant-tools").hide() });
     	        $("#map .plant-tools-link").click(function () { $(".plant-tools").show(); $(".layout-tools").hide() });
     	        
@@ -614,18 +653,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
         	</div><!-- /header -->
 
         	<div data-role="content">
-                <ul data-role="listview" data-inset="true">
-                    <li data-role="list-divider">April</li>
-                    <li>Plant radishes</li>
-                    <li>Plant radishes</li>
-                    <li>Plant radishes</li>
-                    <li data-role="list-divider">May</li>
-                    <li>Plant radishes</li>
-                    <li data-role="list-divider">June</li>
-                    <li>Plant radishes</li>
-                    <li data-role="list-divider">July</li>
-                    <li>Plant radishes</li>
-                    <li>Plant radishes</li>
+                <ul data-role="listview" data-inset="true" class="reminder-list">
                 </ul>
             </div>
         </div>
