@@ -42,7 +42,9 @@
 }
 
 .plant-tools-link, .layout-tools-link {
-  padding: 2px;
+  padding: 2px 2px 0 2px;
+  display: inline-block;
+  cursor: pointer;
 }
 
 .header-left {
