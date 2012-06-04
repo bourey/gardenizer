@@ -237,7 +237,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	        $(plants).each(function (idx, plant) {
     	            if (
         	                (!searchText || plant.name.toLowerCase().indexOf(searchText.toLowerCase()) >= 0) &&
-        	                ((full == plant.full) || (partial == plant.partial)) &&
+        	                ((full && plant.full) || (partial && plant.partial)) &&
         	                (!time || plant.daysToHarvest <= time) &&
         	                ((!vert || !horiz) || (vert*12 >= plant.diameter && horiz*12 >= plant.diameter))
     	                ) {
@@ -260,8 +260,10 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	            selectedVariety = currentPlant.varieties[0];
     	        }
     	        
-    	        $(".plant-detail-name").text(currentPlant.name);
-    	        $(".plant-variety-select").html("");
+    	        $("#add .plant-detail-name").text(currentPlant.name);
+    	        $("#add .plant-detail-info").text(currentPlant.text);
+    	        $("#add .plant-detail-image").attr("src", "images/" + currentPlant.name.toLowerCase() + ".png");
+    	        $("#add .plant-variety-select").html("");
     	        $(currentPlant.varieties).each(function (idx, variety) {
     	            var option = new Option(variety);
     	            if (variety == selectedVariety) {
@@ -340,6 +342,8 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	        $("#history [name=plantas]").val(planting.plantingType);
     	        $("#history [name=rating]").val(planting.rating);
     	        $("#history .plant-name").text(planting.plant);
+    	        $("#history .plant-detail-info").text(plants[planting.plant].text);
+    	        $("#history .plant-detail-image").attr("src", "images/" + planting.plant.toLowerCase() + ".png");
     	        $("#history .history-update-form [name=plantName]").val(planting.plant);
     	        $("#history .plant-again-link").unbind("click").click(function () { showPlant(planting); });
     	        $("#history .star-rating img:not(gt(" + (planting.rating-1) + "))").attr("src", "star-full.png");
@@ -535,6 +539,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
             	            <select class="plant-variety-select" data-inline="true">
             	            </select>
             	        </h2>
+            	        <img class="plant-detail-image"></p>
             	        <p class="plant-detail-info">tomato infos!</p>
             	    </div>
             	    <div class="ui-block-b">
@@ -642,7 +647,8 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
             	        </form>
             	        <a href="javascript:;" class="plant-again-link" data-role="button" data-icon="plus">Plant Again</a>
             	        <h2>Plant Information</h2>
-            	        <p>plant infos!</p>
+            	        <img class="plant-detail-image"></p>
+            	        <p class="plant-detail-info">plant infos!</p>
                     </div>
                 </div>
             </div>

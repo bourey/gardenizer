@@ -1,42 +1,32 @@
 var plants = [
-{ "name": "Asparagus", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Beans", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Beet", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Broccoli", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Brussels Sprouts", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Cabbage", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Carrot", "full": true, "partial": true, "daysToHarvest": 90, "diameter": 6, varieties: ["General"], reminders: [
-{ days: 10, message: "Thin carrots" }
-] },
-{ "name": "Cauliflower", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Chard", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Collard", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Corn", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Cucumber", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Eggplant", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Kohlrabi", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Lettuce", "full": true, "partial": true, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Muskmelon", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Mustard", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Okra", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Onion", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Parsnip", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Peas", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Peppers", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Potato", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Pumpkin", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Radish", "full": true, "partial": true, "daysToHarvest": 90, "diameter": 6, varieties: ["General", "Breakfast", "Easter Egg"], reminders: [
-{ days: 10, message: "Thin radishes" }
-] },
-{ "name": "Rhubarb", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Rutabaga", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Spinach", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Summer Squash", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Sweet Potato", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Tomato", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 24, varieties: ["General", "Brandywine", "Early Girl", "Stupice"], reminders: [
-] },
-{ "name": "Turnip", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Watermelon", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Winter Squash", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] }
+    { "name": "Carrot", "full": true, "partial": true, "daysToHarvest": 75, "diameter": 6, 
+        varieties: ["General"], 
+        reminders: [
+            { days: 10, message: "Thin carrots" }
+        ],
+        text: "Carrot is a hardy, cool-season biennial that is grown for the thickened root it produces in its first growing season. Although carrots can endure summer heat in many areas, they grow best when planted in early spring. Midsummer plantings, that mature quickly in cool fall weather, produce tender, sweet \"baby\" carrots that are much prized. Carrots are eaten both raw and cooked and they can be stored for winter use. They are rich in carotene (the source of vitamin A) and high in fiber and sugar content."
+    },
+    { "name": "Lettuce", "full": true, "partial": true, "daysToHarvest": 60, "diameter": 12, 
+        varieties: ["General"], 
+        reminders: [],
+        text: "Lettuce is a fairly hardy, cool-weather vegetable that thrives when the average daily temperature is between 60 and 70°F. It should be planted in early spring or late summer. At high temperatures, growth is stunted, the leaves may be bitter and the seedstalk forms and elongates rapidly. Some types and varieties of lettuce withstand heat better than others."
+    },
+    { "name": "Radish", "full": true, "partial": true, "daysToHarvest": 25, "diameter": 6, 
+        varieties: ["General", "Breakfast", "Easter Egg"], 
+        reminders: [
+            { days: 10, message: "Thin radishes" }
+        ],
+        text: "Radish is a cool-season, fast-maturing, easy-to-grow vegetable. Garden radishes can be grown wherever there is sun and moist, fertile soil, even on the smallest city lot. Early varieties usually grow best in the cool days of early spring, but some later-maturing varieties can be planted for summer use. The variety French Breakfast holds up and grows better than most early types in summer heat if water is supplied regularly. Additional sowings of spring types can begin in late summer, to mature in the cooler, more moist days of fall. Winter radishes are sown in midsummer to late summer, much as fall turnips. They are slower to develop than spring radishes; and they grow considerably larger, remain crisp longer, are usually more pungent and hold in the ground or store longer than spring varieties."
+    },
+    { "name": "Summer Squash", "full": true, "partial": false, "daysToHarvest": 55, "diameter": 36, 
+        varieties: ["General", "Patty Pan", "Zucchini"], 
+        reminders: [],
+        text: "Summer squash (also known as vegetable or Italian marrow), is a tender, warm-season vegetable that can be grown throughout the United States anytime during the warm, frost-free season. Summer squash differs from fall and winter squash in that it is selected to be harvested before the rind hardens and the fruit matures. It grows on bush-type plants that do not spread like the plants of fall and winter squash and pumpkin. A few healthy and well-maintained plants produce abundant yields."
+    },
+    { "name": "Tomato", "full": true, "partial": false, "daysToHarvest": 70, "diameter": 24, 
+        varieties: ["General", "Brandywine", "Early Girl", "Stupice"], 
+        reminders: [ ],
+        text: "Tomato, is today the most popular garden vegetable in America. For many years, however, tomatoes (then called \"love apples\") were considered poisonous and were grown solely for their ornamental value. Tomatoes are usually easy to grow and a few plants provide an adequate harvest for most families. The quality of fruit picked in the garden when fully ripe far surpasses anything available on the market, even in season. The tomato plant is a tender, warm-season perennial that is grown as an annual in summer gardens all over the continental United States. Spring and fall freezes limit the outdoor growing season."
+    }
 ];
 var interplantings = [[ "Carrot", "Radish" ]];
