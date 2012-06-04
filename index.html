@@ -29,7 +29,7 @@
 	        { areaType: "single-plant", harvestDateStr: "09/01/2011", plantDateStr: "06/01/2011", plantingType: "seed", source: "Swanson's", plant: "Tomato", variety: "Early Girl", position: { left: 100, top: 0, width: 200, height: 200 }, rating: 4, notes: "Great variety! Want to plant again next year" }
     	    ];
     	    
-    	    var partialShadeArea = { top: 250, left: 700, width: 100, height: 250 };
+    	    var partialShadeArea = { top: 250, left: 600, width: 200, height: 250 };
 
     	    var stringToDate = function(string) {
 	            var components = string.split("/");
@@ -119,7 +119,7 @@
     	    };
     	    
     	    var renderPlantMap = function () {
-    	        $("#garden-map").html("");
+    	        $("#garden-map").html("").append($(document.createElement("div")).addClass("shade"));
     	        $(plantings).each(function (idx, planting) { 
     	            if (
     	                ((planting.plantDateStr.split("/")[2]*100+(planting.plantDateStr.split("/")[0]-1)) <= (year*100+month)) &&
@@ -456,6 +456,8 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
         	        $("#history .history-update-form .star-rating img:gt(" + (rating-1) + ")").attr("src", "star-empty.png");
     	        });
     	        
+    	        $("#map").css("min-height", "800px");
+    	        
     	        renderPlantMap();
 
     	    });
@@ -487,6 +489,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
         	</div>
         	
         	<div id="garden-map">
+        	    <div class="shade"></div>
         	</div>
         	
         	<div id="garden-tools">

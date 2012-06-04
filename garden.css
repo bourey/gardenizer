@@ -10,6 +10,14 @@
    */
   position: absolute;
 }
+#garden-map .shade {
+    position: absolute;
+    background-color: #ddd;
+    top: 250px;
+    left: 600px;
+    width: 200px;
+    height: 250px;
+}
 
 #garden-tools {
   width: 400px;
