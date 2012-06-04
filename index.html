@@ -31,6 +31,8 @@
     	        { areaType: "fill-area", harvestDateStr: "05/15/2012", plantDateStr: "04/01/2012", plantingType: "seed", source: "Swanson's", plant: "Radish", variety: "Breakfast", position: { left: 0, top: 0, width: 100, height: 500 }, rating: 3 },
     	        { areaType: "single-plant", harvestDateStr: "09/01/2012", plantDateStr: "06/01/2012", plantingType: "seed", source: "Swanson's", plant: "Tomato", variety: "Early Girl", position: { left: 100, top: 0, width: 200, height: 200 }, rating: 4 }
     	    ];
+    	    
+    	    var partialShadeArea = { top: 250, left: 700, width: 100, height: 250 };
 
     	    var stringToDate = function(string) {
 	            var components = string.split("/");
@@ -78,6 +80,9 @@
                         }
                     }
  	            });
+ 	            if (spaceOverlaps(planting.position, partialShadeArea) && !plants[planting.plant].partial) {
+ 	                warnings.push("May not receive enough sunlight");
+ 	            }
  	            return warnings;
     	    };
     	    
@@ -653,8 +658,24 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
         	</div><!-- /header -->
 
         	<div data-role="content">
-                <ul data-role="listview" data-inset="true" class="reminder-list">
-                </ul>
+        	    <div class="ui-grid-a">
+                    <div class="ui-block-a">
+                        <ul data-role="listview" data-inset="true" class="reminder-list">
+                        </ul>
+                    </div>
+                    <div class="ui-block-b">
+                        <form>
+                	        <div data-role="fieldcontain">
+                    	        <label for="planted">Weekly task email</label>
+                    	        <input id="planted" name="plantDate" type="text"/>
+                	        </div>                            
+                	        <div data-role="fieldcontain">
+                    	        <label for="planted">Watering alerts</label>
+                    	        <input id="planted" name="plantDate" type="text"/>
+                	        </div>                            
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
 

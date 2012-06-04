@@ -5,7 +5,7 @@ var plants = [
 { "name": "Broccoli", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
 { "name": "Brussels Sprouts", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
 { "name": "Cabbage", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Carrot", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 6, varieties: ["General"], reminders: [
+{ "name": "Carrot", "full": true, "partial": true, "daysToHarvest": 90, "diameter": 6, varieties: ["General"], reminders: [
 { days: 10, message: "Thin carrots" }
 ] },
 { "name": "Cauliflower", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
@@ -15,7 +15,7 @@ var plants = [
 { "name": "Cucumber", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
 { "name": "Eggplant", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
 { "name": "Kohlrabi", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Lettuce", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
+{ "name": "Lettuce", "full": true, "partial": true, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
 { "name": "Muskmelon", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
 { "name": "Mustard", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
 { "name": "Okra", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
@@ -25,7 +25,7 @@ var plants = [
 { "name": "Peppers", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
 { "name": "Potato", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
 { "name": "Pumpkin", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
-{ "name": "Radish", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 6, varieties: ["General", "Breakfast", "Easter Egg"], reminders: [
+{ "name": "Radish", "full": true, "partial": true, "daysToHarvest": 90, "diameter": 6, varieties: ["General", "Breakfast", "Easter Egg"], reminders: [
 { days: 10, message: "Thin radishes" }
 ] },
 { "name": "Rhubarb", "full": true, "partial": false, "daysToHarvest": 90, "diameter": 12, varieties: ["General"], reminders: [] },
