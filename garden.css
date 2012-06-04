@@ -42,3 +42,12 @@
   width: 1195px;
 }
 
+.warning-light {
+  background-color: green;
+  width: 5px;
+  height: 5px;
+}
+
+.has-warnings .warning-light {
+  background-color: red;
+}

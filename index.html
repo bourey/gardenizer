@@ -34,10 +34,18 @@
  	            $("#map .plant-square-feet").text((planting.position.width * planting.position.height)/2500);
  	            $("#map .planting-details").show();
  	            
- 	            var warnings = true;
+ 	            var warnings = getWarnings(planting);
  	            $("#map .warnings").hide().find("ul").html("");
- 	            
- 	            // hard-coded
+ 	            if ($(warnings).size() > 0) {
+ 	                $(warnings).each(function (idx, warning) {
+ 	                    $("#map .warnings ul").append(warning);
+ 	                });
+ 	                $("#map .warnings").show();
+ 	            }
+    	    };
+    	    
+    	    var getWarnings = function(planting) {
+    	        var warnings = [];
  	            $(plantings).each(function (idx, other) {
  	                if (planting != other) {
  	                    // check if these two plantings overlap in time and space
@@ -50,14 +58,12 @@
  	                            }
  	                        });
  	                        if (!allowed) {
-                                $("#map .warnings ul").append($(document.createElement("li")).text("Too much overlap with " + other.plant + " planting"));
-                                $("#map .warnings").show();
-                                warnings = true;
- 	                        }
+     	                        warnings.push("Too much overlap with " + other.plant + " planting");
+                            }
                         }
                     }
  	            });
- 	            
+ 	            return warnings;
     	    };
     	    
     	    var stringToDate = function(string) {
@@ -119,7 +125,8 @@
                       .css("left", planting.position ? planting.position.left : 0)
                       .css("top", planting.position ? planting.position.top : 0)
                   .click(function () { showPlantingDetails(planting); });
-                plant.append($(document.createElement("a")).addClass("planting-copy-link").text("c").click(function () {
+                plant.append($(document.createElement("div")).addClass("warning-light"));
+plant.append($(document.createElement("a")).addClass("planting-copy-link").text("c").click(function () {
                     plantings.push(planting);
                     renderPlantMap();
                 }));
@@ -127,6 +134,12 @@
                     plantings.splice($.inArray(planting, plantings), 1);
                     renderPlantMap();
                 }));
+                var warnings = getWarnings(planting);
+                if ($(warnings).size() > 0) {
+                    $(plant).addClass("has-warnings");
+                } else {
+                    $(plant).removeClass("has-warnings");                    
+                }
                 $(plant).draggable({
                       // Constrain the dragging to multiples of the tile size.
                       grid: [TILE_SIZE, TILE_SIZE],
@@ -139,6 +152,12 @@
                           var position = $(this).position();
                           planting.position.top = position.top;
                           planting.position.left = position.left;
+                          var warnings = getWarnings(planting);
+                          if ($(warnings).size() > 0) {
+                              $(this).addClass("has-warnings");
+                          } else {
+                              $(this).removeClass("has-warnings");                    
+                          }
                           showPlantingDetails(planting);
                       }
                     })
@@ -150,6 +169,12 @@
                       resize: function (event, ui) {
                           planting.position.width = $(this).width();
                           planting.position.height = $(this).height();
+                          var warnings = getWarnings(planting);
+                          if ($(warnings).size() > 0) {
+                              $(this).addClass("has-warnings");
+                          } else {
+                              $(this).removeClass("has-warnings");                    
+                          }
                           showPlantingDetails(planting);
                       }
                     });
