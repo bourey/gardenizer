@@ -135,7 +135,7 @@
                 // not overlap them at the start!
     	        var plant =
                   $(document.createElement("div")).addClass("ui-widget-content").addClass("plant-area").css('background-image',
-                      'url("images/' + planting.plant.toLowerCase() + '.png")')
+                      'url("images/' + planting.plant.toLowerCase().replace(/\s+/, '') + '.png")')
                       .css("width", planting.position ? planting.position.width : 50)
                       .css("height", planting.position ? planting.position.height : 50)
                       .css("left", planting.position ? planting.position.left : 0)
@@ -283,7 +283,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
     	        
     	        $("#add .plant-detail-name").text(currentPlant.name);
     	        $("#add .plant-detail-info").text(currentPlant.text);
-    	        $("#add .plant-detail-image").attr("src", "images/" + currentPlant.name.toLowerCase() + ".png");
+    	        $("#add .plant-detail-image").attr("src", "images/" + currentPlant.name.toLowerCase().replace(/\s+/g, '') + ".png");
     	        $("#add .plant-variety-select").html("");
     	        $(currentPlant.varieties).each(function (idx, variety) {
     	            var option = new Option(variety);
@@ -375,7 +375,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
     	        $("#history [name=notes]").val(planting.notes);
     	        $("#history .plant-name").text(planting.plant);
     	        $("#history .plant-detail-info").text(plants[planting.plant].text);
-    	        $("#history .plant-detail-image").attr("src", "images/" + planting.plant.toLowerCase() + ".png");
+    	        $("#history .plant-detail-image").attr("src", "images/" + planting.plant.toLowerCase().replace(/\s+/g, '') + ".png");
     	        $("#history .history-update-form [name=plantName]").val(planting.plant);
     	        $("#history .plant-again-link").unbind("click").click(function () { showPlant(planting); });
     	        $("#history .history-update-form .star-rating img:not(gt(" + (planting.rating-1) + "))").attr("src", "star-full.png");
