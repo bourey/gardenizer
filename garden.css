@@ -130,3 +130,9 @@
 .plant-detail-image {
   margin-left: 10px;
 }
+.reminder-form {
+  padding: 0 10px;
+}
+.reminder-form .ui-slider {
+  vertical-align: middle !important;
+}
