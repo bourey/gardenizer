@@ -77,6 +77,15 @@
   background-color: red;
 }
 
+#search .ui-content .ui-listview {
+  margin: -15px 0 0;
+}
+
+.ui-li {
+  border-left-width: 1px;
+  border-right-width: 1px;
+}
+
 .selected-mode {
   box-shadow: 0 0 2px 2px rgba(0, 0, 255, 0.5);
 }
