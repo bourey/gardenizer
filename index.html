@@ -223,6 +223,25 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
     	        renderPlantMap();
     	        return false;
     	    };
+
+    	    var updatePlanting = function (form, planting) {
+                planting.plantingType = $(form.plantas).val(),
+                planting.plantDateStr = $(form.plantDate).val(),
+                planting.plantDate = stringToDate($(form.plantDate).val()),
+                planting.harvestDateStr = $(form.harvestDate).val(),
+                planting.harvestDate = stringToDate($(form.harvestDate).val()),
+                planting.notes = $(form.notes).val(),
+                planting.source = $(form.source).val(),
+    	        
+    	        $.mobile.changePage("#map");
+    	        month = planting.plantDateStr.split("/")[0]-1;
+    	        year = planting.plantDateStr.split("/")[2];
+    	        $(".month-selector .month").text(months[month] + " " + year);
+    	        renderPlantMap();
+    	        showPlantingDetails(planting);
+    	        return false;
+    	    };
+    	    
     	    
     	    var renderPlantList = function () {
     	        var form = $(".plant-search-form").get(0);
@@ -360,6 +379,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
     	        $("#history .plant-again-link").unbind("click").click(function () { showPlant(planting); });
     	        $("#history .star-rating img:not(gt(" + (planting.rating-1) + "))").attr("src", "star-full.png");
     	        $("#history .star-rating img:gt(" + (planting.rating-1) + ")").attr("src", "star-empty.png");
+    	        $("#history .history-update-form").unbind("submit").submit(function () { console.log("submit"); updatePlanting(this, planting); return false; });
     	    };
     	    
     	    var sortReminders = function (a, b) {
@@ -670,6 +690,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
             	                <img src="star-empty.png"/>
             	            </div>
             	            <input type="hidden" name="rating"/>
+            	            <input type="submit" value="Update"/>
             	        </form>
             	        <a href="javascript:;" class="plant-again-link" data-role="button" data-icon="plus">Plant Again</a>
             	        <h2>Plant Information</h2>
