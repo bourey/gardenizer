@@ -352,6 +352,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
     	        $("#history [name=source]").val(planting.source);
     	        $("#history [name=plantas]").val(planting.plantingType);
     	        $("#history [name=rating]").val(planting.rating);
+    	        $("#history [name=notes]").val(planting.notes);
     	        $("#history .plant-name").text(planting.plant);
     	        $("#history .plant-detail-info").text(plants[planting.plant].text);
     	        $("#history .plant-detail-image").attr("src", "images/" + planting.plant.toLowerCase() + ".png");
@@ -397,8 +398,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
         	    itemLinkTemplate = $(".list-template .list-link-template");
         	    itemHeaderTemplate = $(".list-template .list-header-template");
         	    
-    	        $("#plant-date").datepicker();
-    	        $("#harvest-date").datepicker();
+    	        $(".date-input").datepicker();
     	        
     	        $(".add-planting-form").submit(addPlanting);
     	        $("#add .plant-variety-select").change(function () { $("#add [name=plantVariety]").val($(this).val()); });
@@ -591,11 +591,11 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
             	            </div>
             	            <div data-role="fieldcontain">
             	                <label for="plant-date">Plant date</label>
-            	                <input id="plant-date" name="plantDate" type="text"/>
+            	                <input id="plant-date" name="plantDate" type="text" class="date-input"/>
             	            </div>
             	            <div data-role="fieldcontain">
             	                <label for="harvest-date">Harvest date</label>
-            	                <input id="harvest-date" name="harvestDate" type="text"/>
+            	                <input id="harvest-date" name="harvestDate" type="text" class="date-input"/>
             	            </div>
             	            <div data-role="fieldcontain">
             	                <label for="source">Plant/seed source</label>
@@ -645,11 +645,11 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
             	        <form class="history-update-form">
                 	        <div data-role="fieldcontain">
                     	        <label for="planted">Planted</label>
-                    	        <input id="planted" name="plantDate" type="text"/>
+                    	        <input id="planted" name="plantDate" type="text" class="date-input"/>
                 	        </div>
                 	        <div data-role="fieldcontain">
                     	        <label for="harvest-date">Harvested</label>
-                    	        <input id="harvest-date" name="harvestDate" type="text"/>
+                    	        <input id="harvest-date" name="harvestDate" type="text" class="date-input"/>
                 	        </div>
                 	        <div data-role="fieldcontain">
                     	        <label for="plant-source">Plant source</label>
@@ -661,7 +661,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
                 	        </div>
                 	        <div data-role="fieldcontain">
                     	        <label for="notes">Notes</label>
-                    	        <textarea id="notes"></textarea>
+                    	        <textarea id="notes" name="notes"></textarea>
                 	        </div>
             	            <div class="star-rating">
             	                <img src="star-empty.png"/>
