@@ -146,11 +146,11 @@
                       plantings.splice($.inArray(planting, plantings), 1);
                       renderPlantMap();
                   }).append($(document.createElement("img")).attr("src", "remove.png")));
-                plant.append($(document.createElement("div")).addClass("warning-light"));
 plant.append($(document.createElement("a")).addClass("planting-copy-link").click(function () {
                     plantings.push(planting);
                     renderPlantMap();
                 }).append($(document.createElement("img")).attr("src", "copy.png")));
+                plant.append($(document.createElement("div")).addClass("warning-light"));
                 var warnings = getWarnings(planting);
                 if ($(warnings).size() > 0) {
                     $(plant).addClass("has-warnings");

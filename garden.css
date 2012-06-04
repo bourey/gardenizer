@@ -85,10 +85,15 @@
   width: 10px;
   height: 10px;
   float: left;
+  border-radius: 5px;
+  margin: 2px 0 0 2px;
 }
-.planting-copy-link, .planting-delete-link {
+.planting-copy-link {
   float: right;
-  padding: 0 3px 0 3px;
+}
+.planting-delete-link {
+  float: right;
+  padding-left: 3px;
 }
 
 .has-warnings .warning-light {
