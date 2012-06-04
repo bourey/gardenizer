@@ -1,7 +1,8 @@
 #garden-map {
   width: 800px;
   height: 500px;
-  border: thin solid black;
+  border: thin solid #ddd;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
   margin-left: 10px;
   /*
    * Absolute positioning to ensure that the resizable UI magic can figure out
