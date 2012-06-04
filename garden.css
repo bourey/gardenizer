@@ -61,6 +61,9 @@
   display: inline-block;
   vertical-align: middle;
   margin-bottom: 24px;
+  width: 750px;
+  text-align: center;
+  font-weight: bold;
 }
 
 .header-links {
@@ -69,8 +72,13 @@
 
 .warning-light {
   background-color: green;
-  width: 5px;
-  height: 5px;
+  width: 10px;
+  height: 10px;
+  float: left;
+}
+.planting-copy-link, .planting-delete-link {
+  float: right;
+  padding: 0 3px 0 3px;
 }
 
 .has-warnings .warning-light {
@@ -135,4 +143,23 @@
 }
 .reminder-form .ui-slider {
   vertical-align: middle !important;
+}
+.plant-detail-image { 
+  float: left;
+  padding: 10px;
+}
+.star-rating {
+  margin-left: auto;
+  margin-right: auto;
+  width: 150px;
+}
+.star-rating img {
+  text-align: center;
+  padding:0 3px 0 3px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.plant-history-item-date {
+  float: right;
+  margin-right: 30px;
 }

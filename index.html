@@ -141,15 +141,15 @@
                       .css("left", planting.position ? planting.position.left : 0)
                       .css("top", planting.position ? planting.position.top : 0)
                   .click(function () { showPlantingDetails(planting); });
+                  plant.append($(document.createElement("a")).addClass("planting-delete-link").click(function () {
+                      plantings.splice($.inArray(planting, plantings), 1);
+                      renderPlantMap();
+                  }).append($(document.createElement("img")).attr("src", "remove.png")));
                 plant.append($(document.createElement("div")).addClass("warning-light"));
 plant.append($(document.createElement("a")).addClass("planting-copy-link").click(function () {
                     plantings.push(planting);
                     renderPlantMap();
                 }).append($(document.createElement("img")).attr("src", "copy.png")));
-                plant.append($(document.createElement("a")).addClass("planting-delete-link").click(function () {
-                    plantings.splice($.inArray(planting, plantings), 1);
-                    renderPlantMap();
-                }).append($(document.createElement("img")).attr("src", "remove.png")));
                 var warnings = getWarnings(planting);
                 if ($(warnings).size() > 0) {
                     $(plant).addClass("has-warnings");
@@ -225,14 +225,15 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
     	    };
 
     	    var updatePlanting = function (form, planting) {
-                planting.plantingType = $(form.plantas).val(),
-                planting.plantDateStr = $(form.plantDate).val(),
-                planting.plantDate = stringToDate($(form.plantDate).val()),
-                planting.harvestDateStr = $(form.harvestDate).val(),
-                planting.harvestDate = stringToDate($(form.harvestDate).val()),
-                planting.notes = $(form.notes).val(),
-                planting.source = $(form.source).val(),
-    	        
+                planting.plantingType = $(form.plantas).val();
+                planting.plantDateStr = $(form.plantDate).val();
+                planting.plantDate = stringToDate($(form.plantDate).val());
+                planting.harvestDateStr = $(form.harvestDate).val();
+                planting.harvestDate = stringToDate($(form.harvestDate).val());
+                planting.notes = $(form.notes).val();
+                planting.source = $(form.source).val();
+                planting.rating = $(form.rating).val();
+
     	        $.mobile.changePage("#map");
     	        month = planting.plantDateStr.split("/")[0]-1;
     	        year = planting.plantDateStr.split("/")[2];
@@ -350,7 +351,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
         	            p.append($(document.createElement("span")).addClass("plant-history-item-date")
         	                .text(planting.plantDateStr));
         	            if (planting.rating) {
-            	            var stars = $(document.createElement("span")).addClass("plant-history-item-rating");
+            	            var stars = $(document.createElement("div")).addClass("star-rating");
         	            for (var i = 1; i < 5; i++)
         	                stars.append($(document.createElement("img")).attr("src", i <= planting.rating ? "star-full.png" : "star-empty.png"));
         	                p.append(stars);
@@ -377,8 +378,8 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
     	        $("#history .plant-detail-image").attr("src", "images/" + planting.plant.toLowerCase() + ".png");
     	        $("#history .history-update-form [name=plantName]").val(planting.plant);
     	        $("#history .plant-again-link").unbind("click").click(function () { showPlant(planting); });
-    	        $("#history .star-rating img:not(gt(" + (planting.rating-1) + "))").attr("src", "star-full.png");
-    	        $("#history .star-rating img:gt(" + (planting.rating-1) + ")").attr("src", "star-empty.png");
+    	        $("#history .history-update-form .star-rating img:not(gt(" + (planting.rating-1) + "))").attr("src", "star-full.png");
+    	        $("#history .history-update-form .star-rating img:gt(" + (planting.rating-1) + ")").attr("src", "star-empty.png");
     	        $("#history .history-update-form").unbind("submit").submit(function () { console.log("submit"); updatePlanting(this, planting); return false; });
     	    };
     	    
@@ -451,8 +452,8 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
     	        $("#history form .star-rating img").click(function () {
     	            var rating = Number($(this).index("#history form .star-rating img"))+1;
     	            $("#history form [name=rating]").val(rating);
-        	        $("#history .star-rating img:not(gt(" + (rating-1) + "))").attr("src", "star-full.png");
-        	        $("#history .star-rating img:gt(" + (rating-1) + ")").attr("src", "star-empty.png");
+        	        $("#history .history-update-form .star-rating img:not(gt(" + (rating-1) + "))").attr("src", "star-full.png");
+        	        $("#history .history-update-form .star-rating img:gt(" + (rating-1) + ")").attr("src", "star-empty.png");
     	        });
     	        
     	        renderPlantMap();
@@ -515,9 +516,9 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
         	
         	<div class="month-selector">
                   <div class="month-selector-inner">
-        	    <a class="last-month" href="javascript:;" title="View previous month">&lt;</a>
-        	    <span class="month"></span>
-        	    <a class="next-month" href="javascript:;" title="View next month">&gt;</a>
+            	    <a class="last-month" href="javascript:;" title="View previous month" data-role="button" data-icon="arrow-l" data-inline="true" data-iconpos="notext">&lt;</a>
+            	    <span class="month"></span>
+            	    <a class="next-month" href="javascript:;" title="View next month" data-role="button" data-icon="arrow-r" data-inline="true" data-iconpos="notext">&gt;</a>
                   </div>
         	    <a href="javascript:alert('Not implemented');" title="Print garden map"><img src="printer.png" alt="Print"/></a>
         	</div>
@@ -592,8 +593,10 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
                               data-inline="true" title="Plant variety">
             	            </select>
             	        </h2>
-            	        <img class="plant-detail-image"></p>
-            	        <p class="plant-detail-info">tomato infos!</p>
+            	        <p>
+            	            <img class="plant-detail-image">
+            	            <span class="plant-detail-info">tomato infos!</span>
+            	        </p>
             	    </div>
             	    <div class="ui-block-b">
             	        <h2>Add to garden</h2>
@@ -701,8 +704,10 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
             	        </form>
             	        <a href="javascript:;" class="plant-again-link" data-role="button" data-icon="plus">Plant Again</a>
             	        <h2>Plant Information</h2>
-            	        <img class="plant-detail-image"></p>
-            	        <p class="plant-detail-info">plant infos!</p>
+            	        <p>
+                	        <img class="plant-detail-image"/>
+                	        <span class="plant-detail-info">plant infos!</span>
+            	        </p>
                     </div>
                 </div>
             </div>
