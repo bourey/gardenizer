@@ -469,17 +469,20 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
         		<h1>Gardenizer</h1>
         	</div>
 
-        	<div class="header-links" data-role="content" style="text-align: right;">	
+        	<div class="header-links" data-role="content">	
+                  <div class="header-left">
+                    <div class="zoom-control">
+                        <a data-role="button" data-icon="minus" data-inline="true" data-mini="true" data-iconpos="notext" href="javascript:;">-</a>
+                        <div class="zoom-label">Zoom</div>
+                        <a data-role="button" data-icon="plus" data-inline="true" data-mini="true" data-iconpos="notext" href="javascript:;">+</a>
+                    </div>
+                  </div>
+                  <div class="header-right">
         	    <a class="history-link" href="javascript:;" title="View history and record notes"><img src="edit.png" alt="Notes"/></a>
         	    <a class="calendar-link" href="javascript:;" title="View calendar and reminders"><img src="calendar.png" alt="Calendar"/></a>
         	    <a class="plant-tools-link selected-mode" href="javascript:;">Plant Mode</a>
         	    <a class="layout-tools-link" href="javascript:;">Layout Mode</a>
-        	</div>
-        	
-        	<div>
-        	    <a data-role="button" data-icon="minus" data-inline="true" data-mini="true" data-iconpos="notext" href="javascript:;">-</a>
-        	    Zoom
-        	    <a data-role="button" data-icon="plus" data-inline="true" data-mini="true" data-iconpos="notext" href="javascript:;">+</a>
+                  </div>
         	</div>
         	
         	<div id="garden-map">
@@ -510,9 +513,11 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").click
         	</div>
         	
         	<div class="month-selector">
+                  <div class="month-selector-inner">
         	    <a class="last-month" href="javascript:;">&lt;</a>
         	    <span class="month"></span>
         	    <a class="next-month" href="javascript:;">&gt;</a>
+                  </div>
         	    <a href="javascript:alert('Not implemented');" title-"Print Garden Map"><img src="printer.png" alt="Print"/></a>
         	</div>
             <div style="display:none">
