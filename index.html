@@ -352,10 +352,10 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	        var reminders = [];
     	        $(plantings).each(function (idx, planting) {
     	            if (planting.plantDate.getFullYear() == 2012) {
-        	            reminders.push({ date: planting.plantDate, message: "Plant " + planting.plant });
-        	            reminders.push({ date: planting.harvestDate, message: "Harvest " + planting.plant });
+        	            reminders.push({ date: planting.plantDate, message: "Plant " + planting.plant, planting: planting });
+        	            reminders.push({ date: planting.harvestDate, message: "Harvest " + planting.plant, planting: planting });
         	            $(plants[planting.plant].reminders).each(function (idx, reminder) {
-            	            reminders.push({ date: new Date(planting.plantDate.getTime() + reminder.days*24*60*60*1000), message: reminder.message });
+            	            reminders.push({ date: new Date(planting.plantDate.getTime() + reminder.days*24*60*60*1000), message: reminder.message, planting: planting });
         	            });
     	            }
     	        });
@@ -368,7 +368,7 @@ plant.append($(document.createElement("a")).addClass("planting-copy-link").text(
     	                time = reminder.date.getFullYear()*100+reminder.date.getMonth();
     	            }
     	            var item = itemLinkTemplate.clone();
-    	            $(item).find("a").text(reminder.date.getMonth()+1 + "/" + reminder.date.getDate() + ": " + reminder.message);
+    	            $(item).find("a").text(reminder.date.getMonth()+1 + "/" + reminder.date.getDate() + ": " + reminder.message).click(function () { showPlantingNotes(reminder.planting); });
     	            list.append(item);
     	        });
     	        $.mobile.changePage("#calendar");
